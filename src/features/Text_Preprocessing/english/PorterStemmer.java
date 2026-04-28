@@ -1,42 +1,10 @@
-package IR_Project.src.features.Text_Preprocessing.english;
+package features.Text_Preprocessing.english;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * PorterStemmer: Manual Java implementation of the Porter Stemming Algorithm (1980).
- *
- * Reference: M.F. Porter, "An algorithm for suffix stripping",
- *            Program, Vol. 14, No. 3, pp. 130-137, July 1980.
- *
- * The algorithm operates on a single word at a time and applies five
- * sequential rule groups (Steps 1a → 1b → 1c → 2 → 3 → 4 → 5a → 5b),
- * each stripping or transforming suffixes under specific conditions.
- *
- * Key notation used throughout:
- *   c  = consonant
- *   v  = vowel
- *   C  = sequence of one or more consonants
- *   V  = sequence of one or more vowels
- *
- * A word's stem can be represented as: [C] (VC){m} [V]
- *   m  = the "measure" of the word (number of VC units in the inner part)
- *
- * Most rules apply only when m > 0 or m > 1 to avoid over-stemming
- * very short words.
- */
 public class PorterStemmer {
 
-    // -----------------------------------------------------------------------
-    // Public API
-    // -----------------------------------------------------------------------
-
-    /**
-     * Stems every token in the supplied list.
-     *
-     * @param tokens List of clean lowercase tokens
-     * @return New list of stemmed tokens
-     */
     public List<String> stem(List<String> tokens) {
         List<String> stemmed = new ArrayList<>(tokens.size());
         for (String token : tokens) {
@@ -44,14 +12,6 @@ public class PorterStemmer {
         }
         return stemmed;
     }
-
-    /**
-     * Stems a single word.
-     * Words shorter than 3 characters are returned unchanged.
-     *
-     * @param word Lowercase word
-     * @return Stemmed form
-     */
     public String stemWord(String word) {
         if (word == null || word.length() < 3) {
             return word;
@@ -71,18 +31,6 @@ public class PorterStemmer {
         return new String(b);
     }
 
-    // -----------------------------------------------------------------------
-    // Step 1a – Plural reduction
-    // -----------------------------------------------------------------------
-
-    /**
-     * Step 1a examples:
-     *   caresses  →  caress
-     *   ponies    →  poni
-     *   ties      →  ti
-     *   caress    →  caress
-     *   cats      →  cat
-     */
     private char[] step1a(char[] b) {
         if (endsWith(b, "sses")) return replaceSuffix(b, 4, "ss");
         if (endsWith(b, "ies"))  return replaceSuffix(b, 3, "i");
@@ -91,19 +39,7 @@ public class PorterStemmer {
         return b;
     }
 
-    // -----------------------------------------------------------------------
-    // Step 1b – Past-tense / progressive reduction
-    // -----------------------------------------------------------------------
 
-    /**
-     * Step 1b examples:
-     *   caressed  →  caress
-     *   agreed    →  agree
-     *   plastered →  plaster
-     *   bled      →  bled
-     *   motoring  →  motor
-     *   sing      →  sing
-     */
     private char[] step1b(char[] b) {
 
         if (endsWith(b, "eed")) {
@@ -127,12 +63,6 @@ public class PorterStemmer {
         return b;
     }
 
-    /**
-     * After "-ed" or "-ing" removal, apply the secondary clean-up rules:
-     *   at  → ate   |   bl  → ble   |   iz  → ize
-     *   double consonant (not l, s, z) → remove last char
-     *   measure == 1 and ends cvc (not w, x, y) → add "e"
-     */
     private char[] step1bCleanup(char[] b) {
         if (endsWith(b, "at")) return replaceSuffix(b, 0, "e");   // ate
         if (endsWith(b, "bl")) return replaceSuffix(b, 0, "e");   // ble
@@ -151,15 +81,6 @@ public class PorterStemmer {
         return b;
     }
 
-    // -----------------------------------------------------------------------
-    // Step 1c – y → i
-    // -----------------------------------------------------------------------
-
-    /**
-     * Step 1c: Replace terminal "y" with "i" when the stem contains a vowel.
-     *   happy  →  happi
-     *   sky    →  sky
-     */
     private char[] step1c(char[] b) {
         if (endsWith(b, "y")) {
             char[] stem = stripSuffix(b, 1);
@@ -168,14 +89,6 @@ public class PorterStemmer {
         return b;
     }
 
-    // -----------------------------------------------------------------------
-    // Step 2 – Map double suffixes (m > 0)
-    // -----------------------------------------------------------------------
-
-    /**
-     * Step 2 reduces longer suffixes to shorter forms when m > 0.
-     * Only the longest matching suffix is replaced.
-     */
     private char[] step2(char[] b) {
         if (endsWith(b, "ational"))  return replaceIfM(b, 7, "ate",  1);
         if (endsWith(b, "tional"))   return replaceIfM(b, 6, "tion", 1);
@@ -200,10 +113,6 @@ public class PorterStemmer {
         return b;
     }
 
-    // -----------------------------------------------------------------------
-    // Step 3 – Map suffixes to simpler forms (m > 0)
-    // -----------------------------------------------------------------------
-
     private char[] step3(char[] b) {
         if (endsWith(b, "icate"))  return replaceIfM(b, 5, "ic",  1);
         if (endsWith(b, "ative"))  return replaceIfM(b, 5, "",    1);
@@ -214,10 +123,6 @@ public class PorterStemmer {
         if (endsWith(b, "ness"))   return replaceIfM(b, 4, "",    1);
         return b;
     }
-
-    // -----------------------------------------------------------------------
-    // Step 4 – Remove residual suffixes (m > 1)
-    // -----------------------------------------------------------------------
 
     private char[] step4(char[] b) {
         if (endsWith(b, "al"))     return replaceIfM(b, 2, "", 2);
@@ -252,15 +157,6 @@ public class PorterStemmer {
         return b;
     }
 
-    // -----------------------------------------------------------------------
-    // Step 5a & 5b – Final cleanup
-    // -----------------------------------------------------------------------
-
-    /**
-     * Step 5a removes a final "e":
-     *   probate → probat  (m > 1)
-     *   cease   → ceas    (m == 1 and NOT cvc ending)
-     */
     private char[] step5a(char[] b) {
         if (endsWith(b, "e")) {
             char[] stem = stripSuffix(b, 1);
@@ -271,11 +167,6 @@ public class PorterStemmer {
         return b;
     }
 
-    /**
-     * Step 5b removes a doubled "l" when m > 1:
-     *   controll → control
-     *   roll     → roll
-     */
     private char[] step5b(char[] b) {
         if (measure(b) > 1 && endsDoubleConsonant(b) && endsWith(b, "l")) {
             return stripSuffix(b, 1);
@@ -283,45 +174,21 @@ public class PorterStemmer {
         return b;
     }
 
-    // -----------------------------------------------------------------------
-    // Measure  m(stem)
-    // -----------------------------------------------------------------------
-
-    /**
-     * Computes the measure m of a word segment.
-     * The stem is viewed as: [C] (VC){m} [V]
-     * We count the number of complete VC pairs after any leading consonants.
-     *
-     * @param b Characters representing the word (or its stem portion)
-     * @return  The measure value m (≥ 0)
-     */
     private int measure(char[] b) {
         int n   = b.length;
         int i   = 0;
         int m   = 0;
 
-        // Skip any leading consonants [C]
         while (i < n && isConsonant(b, i)) i++;
 
-        // Count VC pairs
         while (i < n) {
-            // Skip vowel run [V]
             while (i < n && !isConsonant(b, i)) i++;
-            // Skip consonant run [C]
             while (i < n && isConsonant(b, i)) i++;
             m++;
         }
         return m;
     }
 
-    // -----------------------------------------------------------------------
-    // Vowel / consonant helpers
-    // -----------------------------------------------------------------------
-
-    /**
-     * A letter is a vowel if it is a, e, i, o, u.
-     * 'y' is treated as a vowel when preceded by a consonant.
-     */
     private boolean isConsonant(char[] b, int i) {
         char c = b[i];
         if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') return false;
@@ -329,7 +196,6 @@ public class PorterStemmer {
         return true;
     }
 
-    /** Returns true if the array contains at least one vowel. */
     private boolean containsVowel(char[] b) {
         for (int i = 0; i < b.length; i++) {
             if (!isConsonant(b, i)) return true;
@@ -337,21 +203,12 @@ public class PorterStemmer {
         return false;
     }
 
-    /**
-     * *d condition: word ends with a double consonant.
-     * e.g., "hopp", "tann", "fall"
-     */
     private boolean endsDoubleConsonant(char[] b) {
         int n = b.length;
         if (n < 2) return false;
         return b[n - 1] == b[n - 2] && isConsonant(b, n - 1);
     }
 
-    /**
-     * *o condition: word ends consonant-vowel-consonant AND the
-     * final consonant is not w, x, or y.
-     * e.g., "hop", "nil", "whit"
-     */
     private boolean endsCVC(char[] b) {
         int n = b.length;
         if (n < 3) return false;
@@ -361,12 +218,6 @@ public class PorterStemmer {
             &&  isConsonant(b, n - 3)
             && last != 'w' && last != 'x' && last != 'y';
     }
-
-    // -----------------------------------------------------------------------
-    // Suffix manipulation helpers
-    // -----------------------------------------------------------------------
-
-    /** Returns true if {@code b} ends with the given suffix string. */
     private boolean endsWith(char[] b, String suffix) {
         int bl = b.length;
         int sl = suffix.length();
@@ -377,10 +228,6 @@ public class PorterStemmer {
         return true;
     }
 
-    /**
-     * Returns a new array with the last {@code suffixLen} characters removed
-     * and {@code replacement} appended.
-     */
     private char[] replaceSuffix(char[] b, int suffixLen, String replacement) {
         int newLen = b.length - suffixLen + replacement.length();
         char[] result = new char[newLen];
@@ -391,22 +238,12 @@ public class PorterStemmer {
         return result;
     }
 
-    /** Returns a new array with the last {@code n} characters removed. */
     private char[] stripSuffix(char[] b, int n) {
         char[] result = new char[b.length - n];
         System.arraycopy(b, 0, result, 0, result.length);
         return result;
     }
 
-    /**
-     * Applies a suffix replacement only when the stem's measure >= minMeasure.
-     *
-     * @param b          Current word characters
-     * @param suffixLen  Length of suffix to strip
-     * @param replacement Replacement string
-     * @param minMeasure  Required minimum measure of the stem
-     * @return Modified array if condition met, original {@code b} otherwise
-     */
     private char[] replaceIfM(char[] b, int suffixLen, String replacement, int minMeasure) {
         char[] stem = stripSuffix(b, suffixLen);
         if (measure(stem) >= minMeasure) {

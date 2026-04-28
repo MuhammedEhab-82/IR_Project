@@ -1,4 +1,4 @@
-package IR_Project.src.features.Text_Preprocessing.english;
+package features.Text_Preprocessing.english;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,43 +6,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * StopWordRemover: Filters out common English stop-words from a token list.
- *
- * Stop-words are defined inline (no external file or library required).
- * The set is loaded once at construction time for O(1) lookup per token.
- */
 public class StopWordRemover {
 
     private final Set<String> stopWords;
 
-    // -----------------------------------------------------------------------
-    // Constructor
-    // -----------------------------------------------------------------------
-
-    /** Initialises the remover with the built-in English stop-word list. */
     public StopWordRemover() {
         this.stopWords = buildStopWordSet();
     }
 
-    /**
-     * Optional constructor: supply your own stop-word set.
-     * Useful when extending to another language (e.g., Arabic).
-     */
     public StopWordRemover(Set<String> customStopWords) {
         this.stopWords = new HashSet<>(customStopWords);
     }
 
-    // -----------------------------------------------------------------------
-    // Public API
-    // -----------------------------------------------------------------------
-
-    /**
-     * Removes every token that appears in the stop-word set.
-     *
-     * @param tokens List of lowercase tokens (output of Tokenizer)
-     * @return New list with stop-words excluded
-     */
     public List<String> removeStopWords(List<String> tokens) {
         List<String> filtered = new ArrayList<>();
         for (String token : tokens) {
@@ -53,14 +28,6 @@ public class StopWordRemover {
         return filtered;
     }
 
-    // -----------------------------------------------------------------------
-    // Stop-word dictionary
-    // -----------------------------------------------------------------------
-
-    /**
-     * Builds and returns the English stop-word set.
-     * Words are grouped by semantic category for readability.
-     */
     private Set<String> buildStopWordSet() {
         // Articles & determiners
         String[] articles = {

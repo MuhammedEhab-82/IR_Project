@@ -1,4 +1,6 @@
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import features.Text_Preprocessing.*;
 
@@ -34,26 +36,25 @@ public class Main {
                 String fileName = files[i].getName();
 
                 // 1️⃣ read
-                String text = FileReader.readFile(inputFolder + fileName);
+                String  text = FileReader.readFile(inputFolder + fileName);
 
                 // 2️⃣ normalize
-                text = (String) normalizer.process(text);
+                List<String> processedText = normalizer.process(text);
 
-                // 3️⃣ tokenize
-                String[] tokens = (String[]) tokenizer.process(text);
+                List<String> tokens = tokenizer.process(text);
 
-                // 4️⃣ remove stopwords
-                tokens = (String[]) stopwords.process(tokens);
+// 4️⃣ remove stopwords
+                tokens = (List<String>) stopwords.process(tokens);
 
-                // 5️⃣ stemming
-                for (int j = 0; j < tokens.length; j++) {
-                    tokens[j] = (String) stemmer.process(tokens[j]);
+// 5️⃣ stemming
+                List<String> stemmed = new ArrayList<>();
+                for (String token : tokens) {
+                    stemmed.addAll(stemmer.process(token));
                 }
+                tokens = stemmed;
 
-                // 6️⃣ write
+// 6️⃣ write
                 FileWriter.writeFile(outputFolder + fileName, tokens);
-
-                System.out.println("Processed: " + fileName);
             }
         }
 

@@ -2,6 +2,8 @@ package features.Text_Preprocessing.Arabic;
 
 import features.Text_Preprocessing.PreProcessing;
 
+import java.util.List;
+
 public class Tokenizer implements PreProcessing {
 
     public static String[] tokenize(String text) {
@@ -43,5 +45,10 @@ public class Tokenizer implements PreProcessing {
         String text = (String) input; // casting
 
         return tokenize(text);
+    }
+
+    @Override
+    public List<String> process(String input) {
+        return List.of();
     }
 }

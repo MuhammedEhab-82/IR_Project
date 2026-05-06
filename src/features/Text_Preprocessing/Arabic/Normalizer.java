@@ -2,6 +2,8 @@ package features.Text_Preprocessing.Arabic;
 
 import features.Text_Preprocessing.PreProcessing;
 
+import java.util.List;
+
 public class Normalizer implements PreProcessing {
 
     @Override
@@ -26,5 +28,10 @@ public class Normalizer implements PreProcessing {
         }
 
         return result.toString(); // لازم يرجع Object
+    }
+
+    @Override
+    public List<String> process(String input) {
+        return List.of();
     }
 }

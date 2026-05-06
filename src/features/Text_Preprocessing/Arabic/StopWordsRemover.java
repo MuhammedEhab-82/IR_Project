@@ -5,6 +5,7 @@ import features.Text_Preprocessing.PreProcessing;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 public class StopWordsRemover implements PreProcessing {
 
@@ -62,9 +63,21 @@ public class StopWordsRemover implements PreProcessing {
     // 👇 الربط مع الـ interface
     @Override
     public Object process(Object input) {
+        String[] tokens;
 
-        String[] tokens = (String[]) input; // casting
+        if (input instanceof List) {
+            List<String> list = (List<String>) input;
+            tokens = list.toArray(new String[0]);
+        } else {
+            tokens = (String[]) input;
+        }
 
-        return remove(tokens);
+        String[] result = remove(tokens);
+        return new java.util.ArrayList<>(java.util.Arrays.asList(result));
+    }
+
+    @Override
+    public List<String> process(String input) {
+        return List.of();
     }
 }

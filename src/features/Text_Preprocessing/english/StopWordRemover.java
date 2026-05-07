@@ -1,4 +1,4 @@
-package features.Text_Preprocessing.english;
+package features.text_preprocessing.english;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,4 +104,4 @@ public class StopWordRemover {
     private void addAll(Set<String> set, String[] words) {
         set.addAll(Arrays.asList(words));
     }
-}    
+}

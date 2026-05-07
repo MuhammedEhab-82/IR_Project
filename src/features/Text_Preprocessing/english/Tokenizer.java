@@ -1,4 +1,4 @@
-package features.Text_Preprocessing.english;
+package features.text_preprocessing.english;
 
 import java.util.ArrayList;
 import java.util.List;

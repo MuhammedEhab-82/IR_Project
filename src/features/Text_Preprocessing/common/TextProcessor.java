@@ -1,4 +1,4 @@
-package features.Text_Preprocessing.common;
+package features.text_preprocessing.common;
 
 import java.util.List;
 

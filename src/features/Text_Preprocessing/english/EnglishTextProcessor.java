@@ -1,6 +1,6 @@
-package features.Text_Preprocessing.english;
+package features.text_preprocessing.english;
 
-import features.Text_Preprocessing.common.TextProcessor;
+import features.text_preprocessing.common.TextProcessor;
 
 import java.util.List;
 

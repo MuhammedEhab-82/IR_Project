@@ -1,4 +1,4 @@
-package features.text_preprocessing.english;
+package features.Text_Preprocessing.english;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +10,9 @@ public class Tokenizer {
             return new ArrayList<>();
         }
 
-        String lowercased   = text.toLowerCase();
-        String lettersOnly  = replaceNonAlphaWithSpace(lowercased);
-        String[] rawTokens  = lettersOnly.split("\\s+");
+        String lowercased = text.toLowerCase();
+        String lettersOnly = replaceNonAlphaWithSpace(lowercased);
+        String[] rawTokens = lettersOnly.split("\\s+");
 
         return collectNonEmpty(rawTokens);
     }

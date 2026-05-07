@@ -1,34 +1,42 @@
-package features.text_preprocessing.english;
+package features.Text_Preprocessing.english;
 
-import features.text_preprocessing.common.TextProcessor;
+import features.Text_Preprocessing.common.TextProcessor;
 
 import java.util.List;
 
 public class EnglishTextProcessor implements TextProcessor {
 
-    private final Tokenizer       tokenizer;
+    private final Tokenizer tokenizer;
     private final StopWordRemover stopWordRemover;
-    private final PorterStemmer   porterStemmer;
+    private final PorterStemmer porterStemmer;
 
     public EnglishTextProcessor() {
-        this.tokenizer       = new Tokenizer();
+        this.tokenizer = new Tokenizer();
         this.stopWordRemover = new StopWordRemover();
-        this.porterStemmer   = new PorterStemmer();
+        this.porterStemmer = new PorterStemmer();
     }
 
     public EnglishTextProcessor(Tokenizer tokenizer,
-                                 StopWordRemover stopWordRemover,
-                                 PorterStemmer porterStemmer) {
-        this.tokenizer       = tokenizer;
+            StopWordRemover stopWordRemover,
+            PorterStemmer porterStemmer) {
+        this.tokenizer = tokenizer;
         this.stopWordRemover = stopWordRemover;
-        this.porterStemmer   = porterStemmer;
+        this.porterStemmer = porterStemmer;
     }
 
-    public List<String> process(String text) {
-        List<String> tokens = tokenizer.tokenize(text);
+ public List<String> process(String text) {
 
-        List<String> meaningful = stopWordRemover.removeStopWords(tokens);
+    List<String> tokens = tokenizer.tokenize(text);
 
-        return porterStemmer.stem(meaningful);
-    }
+    List<String> meaningful =
+            stopWordRemover.removeStopWords(tokens);
+
+    List<String> stemmed =
+            porterStemmer.stem(meaningful);
+
+    String processedDocument =
+            String.join(" ", stemmed);
+
+    return List.of(processedDocument);
+}
 }

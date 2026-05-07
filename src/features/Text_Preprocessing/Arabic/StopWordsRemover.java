@@ -5,6 +5,7 @@ import features.Text_Preprocessing.PreProcessing;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StopWordsRemover implements PreProcessing {
@@ -15,6 +16,7 @@ public class StopWordsRemover implements PreProcessing {
     public static void loadStopWords(String path) {
 
         try {
+
             BufferedReader br = new BufferedReader(new FileReader(path));
             String line;
 
@@ -29,29 +31,10 @@ public class StopWordsRemover implements PreProcessing {
         }
     }
 
-    public static String[] remove(String[] tokens) {
-
-        String[] result = new String[tokens.length];
-        int index = 0;
-
-        for (int i = 0; i < tokens.length; i++) {
-            if (!isStopWord(tokens[i])) {
-                result[index++] = tokens[i];
-            }
-        }
-
-        // resize
-        String[] finalResult = new String[index];
-        for (int i = 0; i < index; i++) {
-            finalResult[i] = result[i];
-        }
-
-        return finalResult;
-    }
-
     private static boolean isStopWord(String word) {
 
         for (int i = 0; i < size; i++) {
+
             if (word.equals(stopwords[i])) {
                 return true;
             }
@@ -60,24 +43,28 @@ public class StopWordsRemover implements PreProcessing {
         return false;
     }
 
-    // 👇 الربط مع الـ interface
     @Override
-    public Object process(Object input) {
-        String[] tokens;
+    public String process(String input) {
 
-        if (input instanceof List) {
-            List<String> list = (List<String>) input;
-            tokens = list.toArray(new String[0]);
-        } else {
-            tokens = (String[]) input;
+        if (isStopWord(input)) {
+            return "";
         }
 
-        String[] result = remove(tokens);
-        return new java.util.ArrayList<>(java.util.Arrays.asList(result));
+        return input;
     }
 
     @Override
-    public List<String> process(String input) {
-        return List.of();
+    public List<String> process(List<String> input) {
+
+        List<String> result = new ArrayList<>();
+
+        for (String word : input) {
+
+            if (!isStopWord(word)) {
+                result.add(word);
+            }
+        }
+
+        return result;
     }
 }

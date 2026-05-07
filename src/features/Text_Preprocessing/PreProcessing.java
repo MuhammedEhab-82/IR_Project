@@ -3,7 +3,8 @@ package features.Text_Preprocessing;
 import java.util.List;
 
 public interface PreProcessing {
-    Object process(Object input);
 
-    List<String> process(String input);
+    String process(String input);
+
+    List<String> process(List<String> input);
 }

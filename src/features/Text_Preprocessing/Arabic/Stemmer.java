@@ -2,6 +2,7 @@ package features.Text_Preprocessing.Arabic;
 
 import features.Text_Preprocessing.PreProcessing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Stemmer implements PreProcessing {
@@ -24,15 +25,19 @@ public class Stemmer implements PreProcessing {
     }
 
     @Override
-    public Object process(Object input) {
-
-        String word = (String) input; // casting
-
-        return stem(word); // يرجع Object (String)
+    public String process(String input) {
+        return stem(input);
     }
 
     @Override
-    public List<String> process(String input) {
-        return List.of();
+    public List<String> process(List<String> input) {
+
+        List<String> result = new ArrayList<>();
+
+        for (String word : input) {
+            result.add(stem(word));
+        }
+
+        return result;
     }
 }

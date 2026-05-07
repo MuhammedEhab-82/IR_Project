@@ -155,9 +155,7 @@ public class PorterStemmer {
         return removeMatchingSuffix(word, suffixes);
     }
 
-    // =========================================================
-    // Rule Engine
-    // =========================================================
+  
 
     private String removeMatchingSuffix(
             String word,
@@ -180,9 +178,6 @@ public class PorterStemmer {
         return word;
     }
 
-    // =========================================================
-    // Helpers
-    // =========================================================
 
     private String removeSuffix(String word, int n) {
 

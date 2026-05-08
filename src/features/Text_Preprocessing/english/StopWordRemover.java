@@ -18,7 +18,7 @@ public class StopWordRemover {
             Logger.getLogger(StopWordRemover.class.getName());
 
 private static final String DEFAULT_STOPWORDS_PATH =
-        "/features/Text_Preprocessing/english/stopwordsen.txt";
+        "/resources/stopwords_en.txt";
 
     private final Set<String> stopWords;
 

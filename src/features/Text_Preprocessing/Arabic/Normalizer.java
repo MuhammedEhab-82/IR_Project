@@ -1,13 +1,12 @@
 package features.Text_Preprocessing.Arabic;
 
-import features.Text_Preprocessing.PreProcessing;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Normalizer implements PreProcessing {
+public class Normalizer {
 
-    @Override
+
     public String process(String input) {
 
         StringBuilder result = new StringBuilder();
@@ -33,7 +32,6 @@ public class Normalizer implements PreProcessing {
         return result.toString();
     }
 
-    @Override
     public List<String> process(List<String> input) {
 
         List<String> result = new ArrayList<>();

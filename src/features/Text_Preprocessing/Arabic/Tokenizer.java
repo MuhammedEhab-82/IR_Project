@@ -1,11 +1,10 @@
 package features.Text_Preprocessing.Arabic;
 
-import features.Text_Preprocessing.PreProcessing;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tokenizer implements PreProcessing {
+public class Tokenizer{
 
     public List<String> tokenize(String text) {
 
@@ -36,14 +35,13 @@ public class Tokenizer implements PreProcessing {
         return tokens;
     }
 
-    @Override
     public String process(String input) {
 
         // tokenizer مش منطقي يرجع String
         return input;
     }
 
-    @Override
+
     public List<String> process(List<String> input) {
 
         return input;

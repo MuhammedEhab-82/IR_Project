@@ -3,10 +3,7 @@ package features.Indexing;
 import utils.FileReader;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PositionalIndex {
 
@@ -25,7 +22,16 @@ public class PositionalIndex {
     }
 
 
+    public Set<String> getVocabulary() {
 
+        Set<String> vocab = new HashSet<>();
+
+        for (String term : index.keySet()) {
+            vocab.add(term);
+        }
+
+        return vocab;
+    }
 
     public void buildIndex(String folderPath) {
         File folder = new File(folderPath);

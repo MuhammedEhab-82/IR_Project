@@ -2,6 +2,7 @@ package features.Query;
 
 import features.Indexing.PositionalIndex;
 import features.Rank.RankedRetriever;
+import features.Spelling_Correction.SpellingCorrector;
 import features.Text_Preprocessing.english.PorterStemmer;
 import features.Text_Preprocessing.english.StopWordRemover;
 import features.Text_Preprocessing.english.Tokenizer;
@@ -12,24 +13,58 @@ public class QueryProcessor {
 
     private final PositionalIndex index;
     private final RankedRetriever ranker;
+    private final SpellingCorrector corrector;
+
+    // =========================
+    // English
+    // =========================
 
     private final Tokenizer enTokenizer;
     private final StopWordRemover enStopWords;
     private final PorterStemmer enStemmer;
 
+    // =========================
+    // Arabic
+    // =========================
+
     private final features.Text_Preprocessing.Arabic.Tokenizer arTokenizer;
+
     private final features.Text_Preprocessing.Arabic.Normalizer arNormalizer;
+
     private final features.Text_Preprocessing.Arabic.StopWordsRemover arStopWords;
-    private final features.Text_Preprocessing.Arabic.Stemmer arStemmer;
+
+    // =========================
+    // Constructor
+    // =========================
 
     public QueryProcessor(PositionalIndex index) {
 
         this.index = index;
-        this.ranker = new RankedRetriever(index);
 
-        enTokenizer = new Tokenizer();
-        enStopWords = new StopWordRemover();
-        enStemmer = new PorterStemmer();
+        this.ranker =
+                new RankedRetriever(index);
+
+        this.corrector =
+                new SpellingCorrector(
+                        index.getVocabulary()
+                );
+
+        // =========================
+        // English init
+        // =========================
+
+        enTokenizer =
+                new Tokenizer();
+
+        enStopWords =
+                new StopWordRemover();
+
+        enStemmer =
+                new PorterStemmer();
+
+        // =========================
+        // Arabic init
+        // =========================
 
         arTokenizer =
                 new features.Text_Preprocessing.Arabic.Tokenizer();
@@ -39,15 +74,15 @@ public class QueryProcessor {
 
         arStopWords =
                 new features.Text_Preprocessing.Arabic.StopWordsRemover();
-
-        arStemmer =
-                new features.Text_Preprocessing.Arabic.Stemmer();
     }
 
+    // =========================
+    // Detect Arabic chars
+    // =========================
 
-    private boolean isArabic(String query) {
+    private boolean containsArabic(String text) {
 
-        for (char c : query.toCharArray()) {
+        for (char c : text.toCharArray()) {
 
             if (Character.UnicodeBlock.of(c)
                     == Character.UnicodeBlock.ARABIC) {
@@ -59,18 +94,70 @@ public class QueryProcessor {
         return false;
     }
 
-   
+    // =========================
+    // Mixed-language preprocess
+    // =========================
 
     private List<String> preprocess(String query) {
 
-        if (isArabic(query)) {
-            return preprocessArabic(query);
+        List<String> finalTerms =
+                new ArrayList<>();
+
+        List<String> arabicWords =
+                new ArrayList<>();
+
+        List<String> englishWords =
+                new ArrayList<>();
+
+        String[] words =
+                query.split("\\s+");
+
+        for (String word : words) {
+
+            if (containsArabic(word)) {
+
+                arabicWords.add(word);
+
+            } else {
+
+                englishWords.add(word);
+            }
         }
 
-        return preprocessEnglish(query);
+        // =========================
+        // English
+        // =========================
+
+        if (!englishWords.isEmpty()) {
+
+            String englishQuery =
+                    String.join(" ", englishWords);
+
+            finalTerms.addAll(
+                    preprocessEnglish(englishQuery)
+            );
+        }
+
+        // =========================
+        // Arabic
+        // =========================
+
+        if (!arabicWords.isEmpty()) {
+
+            String arabicQuery =
+                    String.join(" ", arabicWords);
+
+            finalTerms.addAll(
+                    preprocessArabic(arabicQuery)
+            );
+        }
+
+        return finalTerms;
     }
 
-    
+    // =========================
+    // English preprocessing
+    // =========================
 
     private List<String> preprocessEnglish(String query) {
 
@@ -86,7 +173,9 @@ public class QueryProcessor {
         return tokens;
     }
 
- 
+    // =========================
+    // Arabic preprocessing
+    // =========================
 
     private List<String> preprocessArabic(String query) {
 
@@ -105,58 +194,149 @@ public class QueryProcessor {
         for (String token : tokens) {
 
             stemmed.add(
-                    arStemmer.process(token)
+                    features.Text_Preprocessing.Arabic.Stemmer.stem(token)
             );
         }
 
         return stemmed;
     }
 
-   
+    // =========================
+    // Boolean Query
+    // =========================
 
+    public QueryResponse query(String query) {
 
-
-
-    public List<SearchResult> query(String query) {
-
-        List<String> terms =
+        List<String> originalTerms =
                 preprocess(query);
 
-        if (terms.isEmpty()) {
-            return Collections.emptyList();
+        if (originalTerms.isEmpty()) {
+
+            return new QueryResponse(
+                    Collections.emptyList(),
+                    false,
+                    null
+            );
         }
 
-        Set<Integer> commonDocs =
-                new HashSet<>(getDocSet(terms.get(0)));
+        // =========================
+        // Spelling correction
+        // =========================
 
-        for (int i = 1; i < terms.size(); i++) {
+        List<String> correctedTerms =
+                new ArrayList<>();
 
-            commonDocs.retainAll(
-                    getDocSet(terms.get(i))
-            );
+        boolean corrected =
+                false;
 
-            if (commonDocs.isEmpty()) {
-                return Collections.emptyList();
+        for (String term : originalTerms) {
+
+            String correctedWord =
+                    corrector.correct(term);
+
+            correctedTerms.add(correctedWord);
+
+            if (!correctedWord.equals(term)) {
+                corrected = true;
             }
         }
 
-        return ranker.rank(terms, commonDocs);
-    }
+        // =========================
+        // Boolean AND logic
+        // =========================
 
+        Set<Integer> commonDocs =
+                new HashSet<>(
+                        getDocSet(correctedTerms.get(0))
+                );
 
+        for (int i = 1; i < correctedTerms.size(); i++) {
 
-    public List<SearchResult> rankedQuery(String query) {
+            commonDocs.retainAll(
+                    getDocSet(correctedTerms.get(i))
+            );
 
-        List<String> terms =
-                preprocess(query);
+            if (commonDocs.isEmpty()) {
 
-        if (terms.isEmpty()) {
-            return Collections.emptyList();
+                return new QueryResponse(
+                        Collections.emptyList(),
+                        corrected,
+                        String.join(" ", correctedTerms)
+                );
+            }
         }
 
-        return ranker.rank(terms);
+        List<SearchResult> results =
+                ranker.rank(correctedTerms, commonDocs);
+
+        return new QueryResponse(
+                results,
+                corrected,
+                corrected
+                        ? String.join(" ", correctedTerms)
+                        : null
+        );
     }
 
+    // =========================
+    // Ranked Query
+    // =========================
+
+    public QueryResponse rankedQuery(String query) {
+
+        List<String> originalTerms =
+                preprocess(query);
+
+        if (originalTerms.isEmpty()) {
+
+            return new QueryResponse(
+                    Collections.emptyList(),
+                    false,
+                    null
+            );
+        }
+
+        // =========================
+        // Spelling correction
+        // =========================
+
+        List<String> correctedTerms =
+                new ArrayList<>();
+
+        boolean corrected =
+                false;
+
+        for (String term : originalTerms) {
+
+            String correctedWord =
+                    corrector.correct(term);
+
+            correctedTerms.add(correctedWord);
+
+            if (!correctedWord.equals(term)) {
+                corrected = true;
+            }
+        }
+
+        // =========================
+        // Ranking
+        // =========================
+
+        List<SearchResult> results =
+                ranker.rank(correctedTerms);
+
+        return new QueryResponse(
+                results,
+                corrected,
+                corrected
+                        ? String.join(" ", correctedTerms)
+                        : null
+        );
+    }
+
+    // =========================
+    // Get docs containing term
+    // =========================
 
     private Set<Integer> getDocSet(String term) {
 
@@ -167,6 +347,8 @@ public class QueryProcessor {
             return Collections.emptySet();
         }
 
-        return new HashSet<>(postings.keySet());
+        return new HashSet<>(
+                postings.keySet()
+        );
     }
 }

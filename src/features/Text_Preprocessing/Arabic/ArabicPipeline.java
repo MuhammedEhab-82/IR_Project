@@ -7,6 +7,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static features.Text_Preprocessing.Arabic.Stemmer.stem;
+
 public class ArabicPipeline {
     private final Normalizer normalizer;
     private final Tokenizer tokenizer;
@@ -50,9 +52,8 @@ public class ArabicPipeline {
                 List<String> stemmed = new ArrayList<>();
 
                 for (String token : tokens) {
-                    stemmed.add(stemmer.process(token));
+                    stemmed.add(stem(token));
                 }
-
                 // 6️⃣ Write
                 FileWriter.writeFile(outputFolder + fileName, stemmed);
             }

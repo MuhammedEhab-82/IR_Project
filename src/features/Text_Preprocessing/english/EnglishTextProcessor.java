@@ -75,6 +75,6 @@ public class EnglishTextProcessor {
             }
         }
 
-        System.out.println("English pipeline done ✔");
+
     }
 }

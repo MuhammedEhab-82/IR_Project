@@ -58,6 +58,5 @@ public class ArabicPipeline {
             }
         }
 
-        System.out.println("Arabic preprocessing done ✔");
     }
 }

@@ -1,0 +1,64 @@
+package features.Text_Preprocessing.Arabic;
+
+import features.Text_Preprocessing.PreProcessing;
+import utils.FileReader;
+import utils.FileWriter;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ArabicPipeline {
+    private final PreProcessing normalizer;
+    private final Tokenizer tokenizer;
+    private final PreProcessing stopwords;
+    private final PreProcessing stemmer;
+
+    public ArabicPipeline() {
+
+        StopWordsRemover.loadStopWords("src/resources/stopwords_ar.txt");
+
+        this.normalizer = new Normalizer();
+        this.tokenizer = new Tokenizer();
+        this.stopwords = new StopWordsRemover();
+        this.stemmer = new Stemmer();
+    }
+
+    public void processFolder(String inputFolder, String outputFolder) {
+
+        File folder = new File(inputFolder);
+        File[] files = folder.listFiles();
+
+        for (File file : files) {
+
+            if (file.isFile()) {
+
+                String fileName = file.getName();
+
+                // 1️⃣ Read
+                String text = FileReader.readFile(inputFolder + fileName);
+
+                // 2️⃣ Normalize
+                String processedText = normalizer.process(text);
+
+                // 3️⃣ Tokenize
+                List<String> tokens = tokenizer.tokenize(processedText);
+
+                // 4️⃣ Remove stopwords
+                tokens = stopwords.process(tokens);
+
+                // 5️⃣ Stem
+                List<String> stemmed = new ArrayList<>();
+
+                for (String token : tokens) {
+                    stemmed.add(stemmer.process(token));
+                }
+
+                // 6️⃣ Write
+                FileWriter.writeFile(outputFolder + fileName, stemmed);
+            }
+        }
+
+        System.out.println("Arabic preprocessing done ✔");
+    }
+}

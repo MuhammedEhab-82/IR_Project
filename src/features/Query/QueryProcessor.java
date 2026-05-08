@@ -114,33 +114,10 @@ public class QueryProcessor {
 
    
 
-    public List<SearchResult> singleWordQuery(String query) {
-
-        List<String> terms =
-                preprocess(query);
-
-        if (terms.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        String term = terms.get(0);
-
-        Map<Integer, List<Integer>> postings =
-                index.getPostings(term);
-
-        if (postings == null || postings.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        Set<Integer> docs =
-                new HashSet<>(postings.keySet());
-
-        return ranker.rank(terms, docs);
-    }
 
 
 
-    public List<SearchResult> multiWordQuery(String query) {
+    public List<SearchResult> query(String query) {
 
         List<String> terms =
                 preprocess(query);

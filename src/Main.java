@@ -37,7 +37,7 @@ public class Main {
         QueryProcessor query=new QueryProcessor(pi);
         System.out.println("Enter your query:");
         String q = scanner.nextLine();
-        List<SearchResult> results =query.rankedQuery(q);
+        List<SearchResult> results =query.query(q);
         ;
         System.out.println("Results:");
         for (SearchResult result : results) {

@@ -13,9 +13,7 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        // =========================
-        // 1. PREPROCESSING PHASE
-        // =========================
+
 
         ArabicPipeline arabicPipeline =
                 new ArabicPipeline();

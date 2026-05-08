@@ -1,11 +1,10 @@
 package features.Text_Preprocessing.Arabic;
 
-import features.Text_Preprocessing.PreProcessing;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Stemmer implements PreProcessing {
+public class Stemmer  {
 
     public static String stem(String word) {
 
@@ -24,12 +23,10 @@ public class Stemmer implements PreProcessing {
         return word;
     }
 
-    @Override
     public String process(String input) {
         return stem(input);
     }
 
-    @Override
     public List<String> process(List<String> input) {
 
         List<String> result = new ArrayList<>();

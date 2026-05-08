@@ -1,6 +1,5 @@
 package features.Text_Preprocessing.Arabic;
 
-import features.Text_Preprocessing.PreProcessing;
 import utils.FileReader;
 import utils.FileWriter;
 
@@ -9,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArabicPipeline {
-    private final PreProcessing normalizer;
+    private final Normalizer normalizer;
     private final Tokenizer tokenizer;
-    private final PreProcessing stopwords;
-    private final PreProcessing stemmer;
+    private final StopWordsRemover stopwords;
+    private final Stemmer stemmer;
 
     public ArabicPipeline() {
 

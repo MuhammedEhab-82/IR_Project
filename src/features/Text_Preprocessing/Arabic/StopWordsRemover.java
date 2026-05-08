@@ -1,6 +1,5 @@
 package features.Text_Preprocessing.Arabic;
 
-import features.Text_Preprocessing.PreProcessing;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -8,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StopWordsRemover implements PreProcessing {
+public class StopWordsRemover {
 
     static String[] stopwords = new String[5000];
     static int size = 0;
@@ -43,7 +42,6 @@ public class StopWordsRemover implements PreProcessing {
         return false;
     }
 
-    @Override
     public String process(String input) {
 
         if (isStopWord(input)) {
@@ -53,7 +51,6 @@ public class StopWordsRemover implements PreProcessing {
         return input;
     }
 
-    @Override
     public List<String> process(List<String> input) {
 
         List<String> result = new ArrayList<>();

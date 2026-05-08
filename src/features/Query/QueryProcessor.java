@@ -9,7 +9,7 @@ import features.Text_Preprocessing.english.Tokenizer;
 
 import java.util.*;
 
-public class QueryProcessor {
+public class QueryProcessor  {
 
     private final PositionalIndex index;
     private final RankedRetriever ranker;
@@ -205,18 +205,13 @@ public class QueryProcessor {
     // Boolean Query
     // =========================
 
-    public QueryResponse query(String query) {
+    public List<SearchResult> query(String query) {
 
         List<String> originalTerms =
                 preprocess(query);
 
         if (originalTerms.isEmpty()) {
-
-            return new QueryResponse(
-                    Collections.emptyList(),
-                    false,
-                    null
-            );
+            return Collections.emptyList();
         }
 
         // =========================
@@ -225,19 +220,16 @@ public class QueryProcessor {
 
         List<String> correctedTerms =
                 new ArrayList<>();
-
-        boolean corrected =
-                false;
-
+        Scanner sc =new Scanner(System.in);
         for (String term : originalTerms) {
-
             String correctedWord =
                     corrector.correct(term);
-
-            correctedTerms.add(correctedWord);
-
-            if (!correctedWord.equals(term)) {
-                corrected = true;
+            System.out.println("did you mean: " + correctedWord+" y/n");
+            String check= sc.next();
+            if (check.equalsIgnoreCase("y")){
+                correctedTerms.add(correctedWord);
+            }else {
+                correctedTerms.add(term);
             }
         }
 
@@ -257,43 +249,27 @@ public class QueryProcessor {
             );
 
             if (commonDocs.isEmpty()) {
-
-                return new QueryResponse(
-                        Collections.emptyList(),
-                        corrected,
-                        String.join(" ", correctedTerms)
-                );
+                return Collections.emptyList();
             }
         }
 
         List<SearchResult> results =
                 ranker.rank(correctedTerms, commonDocs);
 
-        return new QueryResponse(
-                results,
-                corrected,
-                corrected
-                        ? String.join(" ", correctedTerms)
-                        : null
-        );
+        return results;
     }
 
     // =========================
     // Ranked Query
     // =========================
 
-    public QueryResponse rankedQuery(String query) {
+    public List<SearchResult> rankedQuery(String query) {
 
         List<String> originalTerms =
                 preprocess(query);
 
         if (originalTerms.isEmpty()) {
-
-            return new QueryResponse(
-                    Collections.emptyList(),
-                    false,
-                    null
-            );
+            return Collections.emptyList();
         }
 
         // =========================
@@ -303,19 +279,12 @@ public class QueryProcessor {
         List<String> correctedTerms =
                 new ArrayList<>();
 
-        boolean corrected =
-                false;
-
         for (String term : originalTerms) {
 
             String correctedWord =
                     corrector.correct(term);
 
             correctedTerms.add(correctedWord);
-
-            if (!correctedWord.equals(term)) {
-                corrected = true;
-            }
         }
 
         // =========================
@@ -325,13 +294,7 @@ public class QueryProcessor {
         List<SearchResult> results =
                 ranker.rank(correctedTerms);
 
-        return new QueryResponse(
-                results,
-                corrected,
-                corrected
-                        ? String.join(" ", correctedTerms)
-                        : null
-        );
+        return results;
     }
 
     // =========================

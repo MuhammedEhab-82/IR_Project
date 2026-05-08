@@ -2,7 +2,7 @@ package features.Spelling_Correction;
 
 public class EditDistance {
 
-    public static int compute(String a, String b) {
+    public  int compute(String a, String b) {
 
         int[][] dp =
                 new int[a.length() + 1][b.length() + 1];

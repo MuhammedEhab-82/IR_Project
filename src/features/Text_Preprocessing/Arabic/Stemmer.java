@@ -8,33 +8,46 @@ public class Stemmer  {
 
     public static String stem(String word) {
 
-        if (word.startsWith("ال")) {
+        if (word == null || word.isBlank()) {
+            return "";
+        }
+
+        word = word.trim();
+
+        // إزالة التشكيل والتنوين
+        word = word.replaceAll("[ًٌٍَُِّْ]", "");
+
+        // إزالة علامات الترقيم والرموز
+        word = word.replaceAll("[\\p{Punct}«»،؛؟]", "");
+
+        // إزالة الأرقام
+        word = word.replaceAll("\\d+", "");
+
+        // إزالة "ال" التعريف
+        if (word.startsWith("ال") && word.length() > 3) {
             word = word.substring(2);
         }
 
-        if (word.endsWith("ون") || word.endsWith("ين")) {
-            word = word.substring(0, word.length() - 2);
-        }
+        String[] suffixes = {
+                "ون", "ين",
+                "ات",
+                "ان",
+                "هما", "كما", "كم", "كن",
+                "نا", "ها", "هم", "هن",
+                "ية", "ه", "ة", "ي"
+        };
 
-        if (word.endsWith("ه")) {
-            word = word.substring(0, word.length() - 1);
+        for (String suffix : suffixes) {
+            if (word.endsWith(suffix)
+                    && word.length() > suffix.length() + 2) {
+
+                word = word.substring(0,
+                        word.length() - suffix.length());
+
+                break;
+            }
         }
 
         return word;
-    }
-
-    public String process(String input) {
-        return stem(input);
-    }
-
-    public List<String> process(List<String> input) {
-
-        List<String> result = new ArrayList<>();
-
-        for (String word : input) {
-            result.add(stem(word));
-        }
-
-        return result;
     }
 }

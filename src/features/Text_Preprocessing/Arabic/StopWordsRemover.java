@@ -10,7 +10,7 @@ import java.util.List;
 
 public class StopWordsRemover implements PreProcessing {
 
-    static String[] stopwords = new String[1000];
+    static String[] stopwords = new String[5000];
     static int size = 0;
 
     public static void loadStopWords(String path) {

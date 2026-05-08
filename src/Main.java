@@ -1,3 +1,4 @@
+import features.Indexing.PositionalIndex;
 import features.Text_Preprocessing.Arabic.ArabicPipeline;
 import features.Text_Preprocessing.english.EnglishTextProcessor;
 
@@ -21,8 +22,14 @@ public class Main {
         englishPipeline.processFolder(
                 "src/docs/english/",
                 "src/docs/processed/english/"
-        );
 
+
+        );
+        PositionalIndex pi = new PositionalIndex();
+        pi.buildIndex("src/docs/processed/arabic/");
+        pi.buildIndex("src/docs/processed/english/");
+
+        pi.printIndex();
         System.out.println("Done ✔");
     }
 }

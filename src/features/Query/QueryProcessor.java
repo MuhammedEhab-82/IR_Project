@@ -221,17 +221,34 @@ public class QueryProcessor  {
         List<String> correctedTerms =
                 new ArrayList<>();
         Scanner sc =new Scanner(System.in);
-        for (String term : originalTerms) {
-            String correctedWord =
-                    corrector.correct(term);
-            System.out.println("did you mean: " + correctedWord+" y/n");
-            String check= sc.next();
-            if (check.equalsIgnoreCase("y")){
-                correctedTerms.add(correctedWord);
-            }else {
-                correctedTerms.add(term);
-            }
-        }
+       for (String term : originalTerms) {
+
+    if (index.getVocabulary().contains(term)) {
+
+        correctedTerms.add(term);
+        continue;
+    }
+
+    String correctedWord =
+            corrector.correct(term);
+
+    System.out.println(
+            "did you mean: "
+            + correctedWord
+            + " y/n"
+    );
+
+    String check = sc.next();
+
+    if (check.equalsIgnoreCase("y")) {
+
+        correctedTerms.add(correctedWord);
+
+    } else {
+
+        correctedTerms.add(term);
+    }
+}
 
         // =========================
         // Boolean AND logic

@@ -216,7 +216,7 @@ public class QueryProcessor  {
 
         // =========================
         // Spelling correction
-        // =========================
+        // ========================
 
         List<String> correctedTerms =
                 new ArrayList<>();

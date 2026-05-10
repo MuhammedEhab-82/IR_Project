@@ -24,7 +24,6 @@ public class PositionalIndex {
     public Set<String> getVocabulary() {
 
         Set<String> vocab = new HashSet<>();
-
         for (String term : index.keySet()) {
             vocab.add(term);
         }

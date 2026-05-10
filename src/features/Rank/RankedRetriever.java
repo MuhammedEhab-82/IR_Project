@@ -59,11 +59,8 @@ public class RankedRetriever {
                 continue;
             }
 
-            double idfVal =
-                    idf(totalDocs, postings.size());
-
             double queryWeight =
-                    idfVal;
+                    idf(totalDocs, postings.size());
 
             queryMagnitude +=
                     queryWeight * queryWeight;
@@ -88,9 +85,6 @@ public class RankedRetriever {
             double idfVal =
                     idf(totalDocs, df);
 
-            double queryWeight =
-                    idfVal;
-
             for (Map.Entry<Integer, List<Integer>> entry
                     : postings.entrySet()) {
 
@@ -109,7 +103,7 @@ public class RankedRetriever {
 
                 scores.merge(
                         docId,
-                        queryWeight * docWeight,
+                        idfVal * docWeight,
                         Double::sum
                 );
 

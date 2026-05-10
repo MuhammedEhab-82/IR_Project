@@ -204,7 +204,7 @@ public class QueryProcessor  {
     // =========================
     // Boolean Query
     // =========================
-
+/* 
     public List<SearchResult> query(String query) {
 
         List<String> originalTerms =
@@ -275,6 +275,7 @@ public class QueryProcessor  {
 
         return results;
     }
+        */
 
     // =========================
     // Ranked Query
@@ -296,13 +297,43 @@ public class QueryProcessor  {
         List<String> correctedTerms =
                 new ArrayList<>();
 
-        for (String term : originalTerms) {
+      Scanner sc = new Scanner(System.in);
 
-            String correctedWord =
-                    corrector.correct(term);
+for (String term : originalTerms) {
+
+    if (index.getVocabulary().contains(term)) {
+
+        correctedTerms.add(term);
+        continue;
+    }
+
+    String correctedWord =
+            corrector.correct(term);
+
+    System.out.println(
+            "Did you mean: "
+            + correctedWord
+            + " ? (y/n)"
+    );
+
+    String answer =
+            sc.nextLine();
+
+    if (answer.equalsIgnoreCase("y")) {
+
+        correctedTerms.add(correctedWord);
+
+    } else {
+
+        correctedTerms.add(term);
+
+        if (!term.equals(correctedWord)) {
 
             correctedTerms.add(correctedWord);
         }
+    }
+
+}
 
         // =========================
         // Ranking
@@ -313,6 +344,89 @@ public class QueryProcessor  {
 
         return results;
     }
+
+    public List<SearchResult> proximityQuery(String query) {
+
+    String[] parts =
+            query.split("\\s+");
+
+    if (parts.length != 3) {
+
+        return Collections.emptyList();
+    }
+
+    try {
+
+        String rawTerm1 =
+                parts[0];
+
+        String slashPart =
+                parts[1];
+
+        String rawTerm2 =
+                parts[2];
+
+        int k =
+                Integer.parseInt(
+                        slashPart.substring(1)
+                );
+
+        // preprocess terms
+
+        List<String> processed1 =
+                preprocess(rawTerm1);
+
+        List<String> processed2 =
+                preprocess(rawTerm2);
+
+        if (processed1.isEmpty()
+                || processed2.isEmpty()) {
+
+            return Collections.emptyList();
+        }
+
+        String term1 =
+                processed1.get(0);
+
+        String term2 =
+                processed2.get(0);
+
+                term1 =
+        corrector.correct(term1);
+
+                term2 =
+        corrector.correct(term2);
+
+                System.out.println(
+        "Processed Terms: "
+        + term1 + " | " + term2
+);
+
+        // proximity search
+
+        List<Integer> docIds =
+                index.proximitySearch(
+                        term1,
+                        term2,
+                        k
+                );
+
+    Set<Integer> allowedDocs =
+        new HashSet<>(docIds);
+
+List<String> rankedTerms =
+        Arrays.asList(term1, term2);
+
+return ranker.rank(
+        rankedTerms,
+        allowedDocs
+);
+
+    } catch (Exception e) {
+
+        return Collections.emptyList();
+    }
+}
 
     // =========================
     // Get docs containing term

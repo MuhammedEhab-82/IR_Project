@@ -1,9 +1,8 @@
 package features.Indexing;
 
-import utils.FileReader;
-
 import java.io.File;
 import java.util.*;
+import utils.FileReader;
 
 public class PositionalIndex {
 
@@ -16,9 +15,9 @@ public class PositionalIndex {
     private int docCounter;
 
     public PositionalIndex() {
-        index      = new HashMap<>();
+        index       = new HashMap<>();
         docNames   = new HashMap<>();
-        docCounter = -1;
+        docCounter = 0;
     }
 
 
@@ -134,7 +133,7 @@ public class PositionalIndex {
     }
 
     public int getTotalDocs() {
-        return docCounter;
+        return docNames.size();
     }
 
     public String getDocName(int docId) {

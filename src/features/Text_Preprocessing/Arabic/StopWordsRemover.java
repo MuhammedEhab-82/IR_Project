@@ -42,14 +42,6 @@ public class StopWordsRemover {
         return false;
     }
 
-    public String process(String input) {
-
-        if (isStopWord(input)) {
-            return "";
-        }
-
-        return input;
-    }
 
     public List<String> process(List<String> input) {
 

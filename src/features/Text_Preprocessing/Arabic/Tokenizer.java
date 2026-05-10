@@ -35,15 +35,4 @@ public class Tokenizer{
         return tokens;
     }
 
-    public String process(String input) {
-
-        // tokenizer مش منطقي يرجع String
-        return input;
-    }
-
-
-    public List<String> process(List<String> input) {
-
-        return input;
-    }
 }

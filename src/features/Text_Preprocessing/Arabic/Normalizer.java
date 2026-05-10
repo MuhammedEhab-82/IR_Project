@@ -32,14 +32,5 @@ public class Normalizer {
         return result.toString();
     }
 
-    public List<String> process(List<String> input) {
 
-        List<String> result = new ArrayList<>();
-
-        for (String word : input) {
-            result.add(process(word));
-        }
-
-        return result;
-    }
 }

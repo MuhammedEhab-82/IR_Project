@@ -7,16 +7,6 @@ import features.Text_Preprocessing.english.EnglishTextProcessor;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * SearchEngineController - Main orchestrator for the search engine application.
-
- * Responsibilities:
- * - Initialize the search engine (document processing, indexing)
- * - Present interactive menu to the user
- * - Route user choices to appropriate handlers
- * - Manage Scanner lifecycle
- * - Separate UI logic from business logic
- */
 public class SearchEngineController {
 
     private final Scanner scanner;

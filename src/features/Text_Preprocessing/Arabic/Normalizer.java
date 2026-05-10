@@ -1,9 +1,6 @@
 package features.Text_Preprocessing.Arabic;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Normalizer {
 
 

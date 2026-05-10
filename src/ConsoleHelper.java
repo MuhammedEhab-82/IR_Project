@@ -1,19 +1,10 @@
-/**
- * ConsoleHelper - Utility class for clean console output and input handling.
- * Centralizes all console I/O to keep the code organized and reusable.
- */
+
 public class ConsoleHelper {
 
-    private static final String SEPARATOR_LINE = "═".repeat(60);
     private static final String DASH_LINE = "─".repeat(60);
 
     // Output methods
-    public static void printHeader(String title) {
-        println();
-        println(SEPARATOR_LINE);
-        println("  " + title);
-        println(SEPARATOR_LINE);
-    }
+
 
     public static void printSubHeader(String title) {
         println();
@@ -48,11 +39,6 @@ public class ConsoleHelper {
 
     public static void print(String message) {
         System.out.print(message);
-    }
-
-    public static String prompt(String question) {
-        print(question);
-        return new java.util.Scanner(System.in).nextLine().trim();
     }
 
     // Menu display
@@ -110,9 +96,6 @@ public class ConsoleHelper {
         println();
     }
 
-    public static void showIndexPrinting() {
-        printSubHeader("INVERTED INDEX");
-    }
 
     public static void showProcessing(String message) {
         println("⏳ " + message);

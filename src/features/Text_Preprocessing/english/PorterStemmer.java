@@ -3,18 +3,6 @@ package features.Text_Preprocessing.english;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A conservative Porter-like stemmer for English.
- *
- * Design goals:
- * - Only remove suffixes from the END of words.
- * - Avoid over-stemming.
- * - Prevent cases like:
- *      bus -> bu
- *      play -> plai
- *      football -> footbal
- * - Reduce large if/else chains using rule tables.
- */
 public class PorterStemmer {
 
     private static final int MIN_STEM_LENGTH = 3;
@@ -57,7 +45,7 @@ public class PorterStemmer {
         }
 
         if (word.endsWith("ies")) {
-            return tryRemove(word, 2);
+            return tryRemove(word);
         }
 
         if (word.endsWith("ss")) {
@@ -420,9 +408,9 @@ public class PorterStemmer {
         return word.substring(0, word.length() - n);
     }
 
-    private String tryRemove(String word, int n) {
+    private String tryRemove(String word) {
 
-        String stem = removeSuffix(word, n);
+        String stem = removeSuffix(word, 2);
 
         if (stem.length() >= MIN_STEM_LENGTH) {
             return stem;

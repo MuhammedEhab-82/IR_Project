@@ -1,9 +1,5 @@
 package features.Text_Preprocessing.Arabic;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Stemmer  {
 
     public static String stem(String word) {

@@ -12,8 +12,7 @@ import static features.Text_Preprocessing.Arabic.Stemmer.stem;
 public class ArabicPipeline {
     private final Normalizer normalizer;
     private final Tokenizer tokenizer;
-    private final StopWordsRemover stopwords;
-    private final Stemmer stemmer;
+    private final StopWordsRemover stopWords;
 
     public ArabicPipeline() {
 
@@ -21,8 +20,7 @@ public class ArabicPipeline {
 
         this.normalizer = new Normalizer();
         this.tokenizer = new Tokenizer();
-        this.stopwords = new StopWordsRemover();
-        this.stemmer = new Stemmer();
+        this.stopWords = new StopWordsRemover();
     }
 
     public void processFolder(String inputFolder, String outputFolder) {
@@ -30,6 +28,7 @@ public class ArabicPipeline {
         File folder = new File(inputFolder);
         File[] files = folder.listFiles();
 
+        assert files != null;
         for (File file : files) {
 
             if (file.isFile()) {
@@ -46,7 +45,7 @@ public class ArabicPipeline {
                 List<String> tokens = tokenizer.tokenize(processedText);
 
                 // 4️⃣ Remove stopwords
-                tokens = stopwords.process(tokens);
+                tokens = stopWords.process(tokens);
 
                 // 5️⃣ Stem
                 List<String> stemmed = new ArrayList<>();

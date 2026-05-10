@@ -10,7 +10,7 @@ public class Tokenizer{
 
         List<String> tokens = new ArrayList<>();
 
-        String word = "";
+        StringBuilder word = new StringBuilder();
 
         for (int i = 0; i < text.length(); i++) {
 
@@ -18,18 +18,18 @@ public class Tokenizer{
 
             if (c == ' ') {
 
-                if (!word.equals("")) {
-                    tokens.add(word);
-                    word = "";
+                if (!word.isEmpty()) {
+                    tokens.add(word.toString());
+                    word = new StringBuilder();
                 }
 
             } else {
-                word += c;
+                word.append(c);
             }
         }
 
-        if (!word.equals("")) {
-            tokens.add(word);
+        if (!word.toString().isEmpty()) {
+            tokens.add(word.toString());
         }
 
         return tokens;

@@ -264,10 +264,7 @@ for (String term : originalTerms) {
         // Ranking
         // =========================
 
-        List<SearchResult> results =
-                ranker.rank(correctedTerms);
-
-        return results;
+        return ranker.rank(correctedTerms);
     }
 
     public List<SearchResult> proximityQuery(String query) {
@@ -311,10 +308,10 @@ for (String term : originalTerms) {
         }
 
         String term1 =
-                processed1.get(0);
+                processed1.getFirst();
 
         String term2 =
-                processed2.get(0);
+                processed2.getFirst();
 
                 term1 =
         corrector.correct(term1);
@@ -357,17 +354,4 @@ return ranker.rank(
     // Get docs containing term
     // =========================
 
-    private Set<Integer> getDocSet(String term) {
-
-        Map<Integer, List<Integer>> postings =
-                index.getPostings(term);
-
-        if (postings == null) {
-            return Collections.emptySet();
-        }
-
-        return new HashSet<>(
-                postings.keySet()
-        );
-    }
 }

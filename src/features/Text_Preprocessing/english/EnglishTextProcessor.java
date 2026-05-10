@@ -4,7 +4,6 @@ import utils.FileReader;
 import utils.FileWriter;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class EnglishTextProcessor {
@@ -37,12 +36,6 @@ public class EnglishTextProcessor {
             return;
         }
 
-        File outFolder = new File(outputFolder);
-
-        if (!outFolder.exists()) {
-            outFolder.mkdirs();
-        }
-
         for (File file : files) {
 
             if (file.isFile()) {
@@ -59,7 +52,6 @@ public class EnglishTextProcessor {
                 List<String> tokens =
                         tokenizer.tokenize(text);
 
-                // 3️⃣ Remove stopwords
                 List<String> meaningful =
                         stopWordRemover.removeStopWords(tokens);
 

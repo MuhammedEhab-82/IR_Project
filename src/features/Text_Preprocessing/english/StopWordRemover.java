@@ -24,7 +24,7 @@ private static final String DEFAULT_STOPWORDS_PATH =
 
     
     public StopWordRemover() {
-        this.stopWords = loadFromClasspath(DEFAULT_STOPWORDS_PATH);
+        this.stopWords = loadFromClasspath();
     }
 
     public StopWordRemover(Set<String> customStopWords) {
@@ -43,12 +43,12 @@ private static final String DEFAULT_STOPWORDS_PATH =
     }
 
    
-    private Set<String> loadFromClasspath(String resourcePath) {
+    private Set<String> loadFromClasspath() {
         Set<String> words = new HashSet<>();
 
-        try (InputStream is = getClass().getResourceAsStream(resourcePath)) {
+        try (InputStream is = getClass().getResourceAsStream(StopWordRemover.DEFAULT_STOPWORDS_PATH)) {
             if (is == null) {
-                LOG.warning("Stop-word file not found: " + resourcePath
+                LOG.warning("Stop-word file not found: " + StopWordRemover.DEFAULT_STOPWORDS_PATH
                         + ". Stop-word removal will be skipped.");
                 return words;
             }

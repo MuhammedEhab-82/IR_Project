@@ -7,10 +7,10 @@ import utils.FileReader;
 public class PositionalIndex {
 
     // term → (docId → list of positions)
-    private Map<String, Map<Integer, List<Integer>>> index;
+    private final Map<String, Map<Integer, List<Integer>>> index;
 
     // docId → اسم الملف
-    private Map<Integer, String> docNames;
+    private final Map<Integer, String> docNames;
 
     private int docCounter;
 
@@ -23,12 +23,7 @@ public class PositionalIndex {
 
     public Set<String> getVocabulary() {
 
-        Set<String> vocab = new HashSet<>();
-        for (String term : index.keySet()) {
-            vocab.add(term);
-        }
-
-        return vocab;
+        return new HashSet<>(index.keySet());
     }
 
     public void buildIndex(String folderPath) {
@@ -40,10 +35,10 @@ public class PositionalIndex {
             return;
         }
 
-        for (int i = 0; i < files.length; i++) {
-            if (files[i].isFile()) {
-                String content = FileReader.readFile(files[i].getPath());
-                addDocument(docCounter, files[i].getName(), content);
+        for (File file : files) {
+            if (file.isFile()) {
+                String content = FileReader.readFile(file.getPath());
+                addDocument(docCounter, file.getName(), content);
                 docCounter++;
             }
         }
@@ -108,10 +103,11 @@ public class PositionalIndex {
 
             boolean found = false;
             for (int i = 0; i < positions1.size() && !found; i++) {
-                for (int j = 0; j < positions2.size() && !found; j++) {
-                    int distance = Math.abs(positions1.get(i) - positions2.get(j));
+                for (Integer integer : positions2) {
+                    int distance = Math.abs(positions1.get(i) - integer);
                     if (distance <= k) {
                         found = true;
+                        break;
                     }
                 }
             }
@@ -127,20 +123,12 @@ public class PositionalIndex {
 
     // Methods للـ TFIDF والـ QueryParser
 
-    public Map<String, Map<Integer, List<Integer>>> getFullIndex() {
-        return index;
-    }
-
     public int getTotalDocs() {
         return docNames.size();
     }
 
     public String getDocName(int docId) {
         return docNames.getOrDefault(docId, "Unknown");
-    }
-
-    public Map<Integer, String> getAllDocNames() {
-        return docNames;
     }
 
 

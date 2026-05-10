@@ -1,1 +1,0 @@
-supervis learn workflow supervis learn model train using label dataset predict outcom accur process involv feed system input output pair learn underli map function common algorithm includ decis tre neural network effect supervis learn fundament build search engin recommend system goal rank inform base relev specif user queri 

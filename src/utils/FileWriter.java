@@ -10,8 +10,8 @@ public class FileWriter {
         try {
             java.io.FileWriter fw = new java.io.FileWriter(path);
 
-            for (int i = 0; i < tokens.size(); i++) {
-                fw.write(tokens.get(i) + " ");
+            for (String token : tokens) {
+                fw.write(token + " ");
             }
 
             fw.close();

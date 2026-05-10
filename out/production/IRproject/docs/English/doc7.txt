@@ -1,2 +1,0 @@
-Model Evaluation Metrics
-Evaluating the performance of a retrieval system requires specific metrics like precision and recall. Precision measures the accuracy of the results, while recall identifies the proportion of relevant documents retrieved. In computer science, the F1-score provides a balanced view of these two metrics. These evaluations are crucial when testing search engine algorithms to ensure that the most relevant information appears at the top of the ranked results.

@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 /**
  * SearchEngineController - Main orchestrator for the search engine application.
- *
+
  * Responsibilities:
  * - Initialize the search engine (document processing, indexing)
  * - Present interactive menu to the user
@@ -60,7 +60,6 @@ public class SearchEngineController {
             index.buildIndex("src/docs/processed/arabic/");
             index.buildIndex("src/docs/processed/english/");
             queryProcessor = new QueryProcessor(index);
-
 
         } catch (Exception e) {
             ConsoleHelper.printError("Failed to initialize search engine: " + e.getMessage());

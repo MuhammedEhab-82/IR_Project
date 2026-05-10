@@ -1,565 +1,587 @@
-# Information Retrieval (IR) Search Engine - Complete Documentation
+# IR Search Engine - Bilingual Information Retrieval System
 
-A bilingual (English/Arabic) document search engine with ranked retrieval, proximity search, and advanced NLP processing.
-
----
-
-## 📋 Table of Contents
-
-1. [Project Overview](#project-overview)
-2. [Quick Start](#quick-start)
-3. [Features](#features)
-4. [Architecture](#architecture)
-5. [System Components](#system-components)
-6. [Documentation](#documentation)
-7. [How to Run](#how-to-run)
-8. [Project Structure](#project-structure)
-9. [Recent Refactoring](#recent-refactoring)
-10. [Support & Contributing](#support--contributing)
+A Java-based **Information Retrieval (IR) system** that enables ranked and proximity searching across bilingual (English & Arabic) document collections using advanced text processing, positional indexing, and TF-IDF ranking.
 
 ---
 
-## 🎯 Project Overview
+## Features
 
-This IR system is a comprehensive, modular implementation of information retrieval concepts. It supports:
+### ✅ **Core Search Capabilities**
+- **Ranked Search**: Retrieve documents ranked by relevance using TF-IDF scoring and cosine similarity
+- **Proximity Search**: Find documents where two terms occur within a specified distance (positional indexing)
+- **Bilingual Support**: Seamlessly handle English and Arabic queries with language-specific preprocessing
+- **Automatic Language Detection**: Distinguish between Arabic and English text within mixed-language queries
 
-- **Bilingual Processing:** English and Arabic documents
-- **Advanced Preprocessing:** Tokenization, normalization, stemming, stop word removal
-- **Ranked Retrieval:** TF-IDF based scoring and ranking
-- **Proximity Search:** Find terms within specified distances
-- **Spelling Correction:** Automatic misspelling detection and correction
-- **Extensible Architecture:** Clean, modular design for easy enhancement
+### ✅ **Text Processing Pipeline**
+- **English Processing**: Tokenization → Stop word removal → Porter stemming
+- **Arabic Processing**: Normalization → Tokenization → Stop word removal → Arabic stemming
+- **Language-Specific Stemming**: Porter stemmer for English, custom Arabic stemmer for Arabic
+- **Stop Word Lists**: Configurable stop word removal using external resource files
 
-### Key Dataset
-- **20 documents:** 10 English + 10 Arabic
-- **Located in:** `src/docs/` directory
-- **Processed versions:** `src/docs/processed/` directory
+### ✅ **Indexing & Retrieval**
+- **Positional Index**: Stores term positions within documents for proximity search support
+- **Inverted Index**: Maps terms to documents with position lists for efficient retrieval
+- **TF-IDF Ranking**: Combined term frequency (TF) and inverse document frequency (IDF) for relevance scoring
+- **Cosine Similarity**: Vector-space model for ranking documents by query-document similarity
 
----
+### ✅ **Spelling Correction**
+- **Edit Distance (Levenshtein Distance)**: Detects and corrects misspelled query terms
+- **Dictionary-Based Correction**: Suggests closest matches from the indexed vocabulary
 
-## 🚀 Quick Start
-
-### Prerequisites
-```
-Java 11+
-Project structure intact (src/ directory with all files)
-```
-
-### Installation
-
-```bash
-# Clone/extract the project
-cd IRproject
-
-# Compile (if needed)
-javac -cp src -d out src/Main.java src/SearchEngineController.java src/ConsoleHelper.java
-
-# Run
-java -cp out Main
-```
-
-### First Search
-```
-1. Application starts and initializes
-2. Main menu appears
-3. Select option 1 for Ranked Search
-4. Type your query: "neural networks"
-5. View ranked results
-```
+### ✅ **Interactive CLI Menu**
+- **Main Menu Interface**: Clean, numbered options for all search types
+- **User-Friendly Prompts**: Clear instructions for query input and parameter selection
+- **Formatted Results**: Numbered ranked results with relevance scores
+- **Index Inspection**: Option to view the complete inverted index structure
 
 ---
 
-## ✨ Features
-
-### 1. Ranked Search
-- Full-text search across all documents
-- Results ranked by TF-IDF relevance score
-- Supports English, Arabic, and mixed queries
-- Automatic spelling correction
-
-### 2. Proximity Search
-- Find terms within a specified distance
-- Useful for phrase-based searching
-- Positional index enables efficient search
-- Examples:
-  - `neural/3/networks` - "neural" within 3 words of "networks"
-  - `البحث/2/المعلومات` - Arabic terms within 2 words
-
-### 3. Index Inspection
-- View the complete inverted index
-- See term frequencies and document positions
-- Understand how documents are indexed
-- Useful for debugging and analysis
-
-### 4. Advanced Text Processing
-
-#### English Processing
-- Tokenization (word splitting)
-- Lowercasing
-- Porter Stemmer (converts words to root form)
-- Stop word removal (removes common words like "the", "a")
-
-#### Arabic Processing
-- Proper Unicode support
-- Arabic normalization (diacritic removal)
-- Arabic stemming (root extraction)
-- Arabic stop word removal
-- Handles complex morphology
-
-### 5. Spelling Correction
-- Edit distance based correction
-- Suggests corrections for misspelled terms
-- Integrates with search queries
-- Supports both languages
-
----
-
-## 🏗️ Architecture
+## Project Structure
 
 ```
-┌─────────────────────────────────────────┐
-│            USER INTERFACE               │
-│  (Main.java → SearchEngineController)   │
-├─────────────────────────────────────────┤
-│          CONSOLE UTILITIES              │
-│         (ConsoleHelper.java)            │
-├─────────────────────────────────────────┤
-│        SEARCH ENGINE LOGIC              │
-│  ┌──────────────────────────────────┐   │
-│  │ QueryProcessor                   │   │
-│  ├─ Ranked Query Processing        │   │
-│  ├─ Proximity Query Processing     │   │
-│  └─ Language Detection             │   │
-│  ┌──────────────────────────────────┐   │
-│  │ PositionalIndex                  │   │
-│  ├─ Inverted Index Management      │   │
-│  ├─ Document Storage              │   │
-│  └─ Posting Lists with Positions   │   │
-│  ┌──────────────────────────────────┐   │
-│  │ RankedRetriever                  │   │
-│  └─ TF-IDF Scoring & Ranking       │   │
-├─────────────────────────────────────────┤
-│        TEXT PREPROCESSING               │
-│  ┌────────────────────┐                 │
-│  │ EnglishTextProcessor   │                 │
-│  │ - Tokenizer        │                 │
-│  │ - StopWordRemover  │                 │
-│  │ - PorterStemmer    │                 │
-│  └────────────────────┘                 │
-│  ┌────────────────────┐                 │
-│  │ ArabicPipeline     │                 │
-│  │ - Tokenizer        │                 │
-│  │ - Normalizer       │                 │
-│  │ - StopWordsRemover │                 │
-│  │ - Stemmer          │                 │
-│  └────────────────────┘                 │
-├─────────────────────────────────────────┤
-│      SPELLING CORRECTION                │
-│  ┌────────────────────┐                 │
-│  │ SpellingCorrector  │                 │
-│  │ - EditDistance     │                 │
-│  │ - Vocabulary Check │                 │
-│  └────────────────────┘                 │
-├─────────────────────────────────────────┤
-│         UTILITIES                       │
-│  ┌────────────────────┐                 │
-│  │ FileReader/Writer  │                 │
-│  └────────────────────┘                 │
-└─────────────────────────────────────────┘
+IRproject/
+├── README.md                          # Project documentation
+├── Evaluation.md                       # First evaluation report
+├── Evaluation2.md                      # Second evaluation report
+├── IRproject.iml                       # IntelliJ IDEA module file
+│
+├── src/
+│   ├── Main.java                       # Application entry point
+│   ├── SearchEngineController.java     # Main orchestrator & menu controller
+│   ├── ConsoleHelper.java              # Console I/O utility class
+│   │
+│   ├── features/
+│   │   ├── Indexing/
+│   │   │   └── PositionalIndex.java    # Positional inverted index implementation
+│   │   │
+│   │   ├── Query/
+│   │   │   ├── QueryProcessor.java     # Query parsing & processing (ranked + proximity)
+│   │   │   ├── SearchResult.java       # Result object (docId, docName, score)
+│   │   │   └── QueryResponse.java      # Response wrapper
+│   │   │
+│   │   ├── Rank/
+│   │   │   └── RankedRetriever.java    # TF-IDF ranking & cosine similarity
+│   │   │
+│   │   ├── Spelling_Correction/
+│   │   │   ├── EditDistance.java       # Levenshtein distance computation
+│   │   │   └── SpellingCorrector.java  # Spelling correction engine
+│   │   │
+│   │   └── Text_Preprocessing/
+│   │       ├── English/
+│   │       │   ├── EnglishTextProcessor.java    # English pipeline orchestrator
+│   │       │   ├── Tokenizer.java               # English tokenization
+│   │       │   ├── StopWordRemover.java         # English stop word removal
+│   │       │   └── PorterStemmer.java           # Porter stemming algorithm
+│   │       └── Arabic/
+│   │           ├── ArabicPipeline.java          # Arabic pipeline orchestrator
+│   │           ├── Normalizer.java              # Arabic text normalization
+│   │           ├── Tokenizer.java               # Arabic tokenization
+│   │           ├── StopWordsRemover.java        # Arabic stop word removal
+│   │           └── Stemmer.java                 # Arabic stemming algorithm
+│   │
+│   ├── utils/
+│   │   ├── FileReader.java             # File input utility
+│   │   └── FileWriter.java             # File output utility
+│   │
+│   ├── docs/
+│   │   ├── English/                    # Original English documents (en_001.txt - en_005.txt)
+│   │   ├── arabic/                     # Original Arabic documents (ar_001.txt - ar_005.txt)
+│   │   └── processed/
+│   │       ├── English/                # Preprocessed English documents
+│   │       └── arabic/                 # Preprocessed Arabic documents
+│   │
+│   └── resources/
+│       ├── stopwords_en.txt            # English stop word list
+│       └── stopwords_ar.txt            # Arabic stop word list
 ```
 
 ---
 
-## 🔧 System Components
+## Application Flow
 
-### Core Classes
+### **1. Startup Phase** (Main.java)
+```
+Main.main()
+  ↓
+Creates SearchEngineController
+  ↓
+controller.initialize()
+  ├─ ArabicPipeline.processFolder()
+  │  ├─ Read raw Arabic documents
+  │  ├─ Normalize text (remove diacritics, etc.)
+  │  ├─ Tokenize into words
+  │  ├─ Remove Arabic stop words
+  │  ├─ Apply Arabic stemming
+  │  └─ Write processed output
+  ├─ EnglishTextProcessor.processFolder()
+  │  ├─ Read raw English documents
+  │  ├─ Tokenize into words
+  │  ├─ Remove English stop words
+  │  ├─ Apply Porter stemming
+  │  └─ Write processed output
+  ├─ PositionalIndex.buildIndex() ×2
+  │  ├─ Read processed documents
+  │  ├─ Index terms with positions
+  │  └─ Build inverted index
+  └─ Create QueryProcessor with index
 
-| Component | Package | Purpose |
-|-----------|---------|---------|
-| `PositionalIndex` | `features.Indexing` | Manages inverted index with positions |
-| `QueryProcessor` | `features.Query` | Processes user queries |
-| `RankedRetriever` | `features.Rank` | Scores and ranks documents |
-| `SpellingCorrector` | `features.Spelling_Correction` | Corrects misspellings |
+controller.start()
+  ↓
+Enter interactive menu loop
+```
 
-### Text Processing
+### **2. Runtime: Ranked Search**
+```
+User selects "1" → handleRankedSearch()
+  ↓
+Get query from user
+  ↓
+QueryProcessor.rankedQuery(query)
+  ├─ Auto-detect language (Arabic vs English)
+  ├─ Apply language-specific preprocessing
+  │  ├─ Tokenize
+  │  ├─ Remove stop words
+  │  └─ Apply stemming
+  ├─ Spelling correction (optional)
+  ├─ RankedRetriever.rank(terms)
+  │  ├─ Calculate TF for each term in each document
+  │  ├─ Calculate IDF for each term
+  │  ├─ Compute TF-IDF vectors
+  │  ├─ Calculate query magnitude
+  │  ├─ Calculate cosine similarity scores
+  │  └─ Sort by score
+  └─ Return List<SearchResult>
+  ↓
+ConsoleHelper.showResults() - Display ranked results
+```
 
-| Component | Language | Purpose |
-|-----------|----------|---------|
-| `EnglishTextProcessor` | English | Coordinates English processing |
-| `Tokenizer` | English | Splits text into tokens |
-| `PorterStemmer` | English | Reduces words to roots |
-| `StopWordRemover` | English | Filters common words |
-| `ArabicPipeline` | Arabic | Coordinates Arabic processing |
-| `Tokenizer` | Arabic | Arabic-specific tokenization |
-| `Normalizer` | Arabic | Removes diacritics |
-| `Stemmer` | Arabic | Arabic morphological stemming |
-| `StopWordsRemover` | Arabic | Arabic stop word filtering |
+### **3. Runtime: Proximity Search**
+```
+User selects "2" → handleProximitySearch()
+  ↓
+Get proximity query from user (format: "term1/k/term2")
+  ↓
+Parse: term1, k, term2
+  ↓
+QueryProcessor.proximityQuery(query)
+  ├─ Preprocess term1 and term2
+  ├─ Apply spelling correction
+  ├─ PositionalIndex.proximitySearch(term1, term2, k)
+  │  ├─ Get posting lists for term1 and term2
+  │  ├─ For each document containing both:
+  │  │  ├─ Compare term positions
+  │  │  └─ If distance ≤ k: add to results
+  │  └─ Return matching document IDs
+  ├─ RankedRetriever.rank(terms, allowedDocs)
+  │  ├─ Rank only documents from proximity search
+  │  └─ Return ranked results
+  └─ Return List<SearchResult>
+  ↓
+ConsoleHelper.showResults() - Display proximity results
+```
 
-### User Interface
+### **4. Runtime: Print Index**
+```
+User selects "3" → handlePrintIndex()
+  ↓
+PositionalIndex.printIndex()
+  ├─ For each term in index:
+  │  ├─ Print term
+  │  ├─ For each document:
+  │  │  └─ Print doc_id: [position_list]
+  │  └─ Print newline
+  └─ Return
+```
 
-| Component | Purpose |
-|-----------|---------|
-| `Main` | Application entry point |
-| `SearchEngineController` | Main orchestrator |
-| `ConsoleHelper` | UI utilities and formatting |
+### **5. Shutdown**
+```
+User selects "4" → handleExit()
+  ↓
+Set running = false
+  ↓
+Exit menu loop
+  ↓
+ConsoleHelper.showGoodbye()
+  ↓
+scanner.close()
+  ↓
+Program terminates
+```
 
 ---
 
-## 📚 Documentation
+## Search Types
 
-### For Users
-- **[USER_MANUAL.md](USER_MANUAL.md)** - Complete user guide with examples
+### **Ranked Search**
+- **Purpose**: Find all documents relevant to a query, ranked by relevance score
+- **Input**: Query string (English or Arabic)
+- **Processing**: 
+  - Automatic language detection
+  - Language-specific preprocessing
+  - TF-IDF ranking using cosine similarity
+- **Output**: Sorted list of documents with relevance scores
+- **Use Case**: General information retrieval, document discovery
 
-### For Developers
-- **[REFACTORING_GUIDE.md](REFACTORING_GUIDE.md)** - Architecture and design decisions
-- **[REFACTORING_SUMMARY.md](REFACTORING_SUMMARY.md)** - Quick reference
-- **[FLOW_DIAGRAMS.md](FLOW_DIAGRAMS.md)** - Visual system flows
-- **[DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)** - How to extend the system
+**Example:**
+```
+Query: "machine learning neural networks"
+Result:
+  1. en_001.txt (score: 8.4523)
+  2. en_003.txt (score: 7.2341)
+  3. en_005.txt (score: 5.1234)
+```
 
-### For Evaluation
-- **[Evaluation.md](src/Evaluation.md)** - System evaluation metrics
-- **[RESULTS_REPORT.md](src/features/Evaluation/RESULTS_REPORT.md)** - Evaluation results
+### **Proximity Search**
+- **Purpose**: Find documents where two terms occur within a specified distance
+- **Input**: `term1/k/term2` where k is maximum distance (in positions)
+- **Processing**:
+  - Parse term1, k, term2 from query
+  - Preprocess both terms
+  - Check positional index for term proximity
+  - Rank matching documents
+- **Output**: Documents ranked by relevance (among those containing both terms in proximity)
+- **Use Case**: Phrase detection, context-aware search
+
+**Example:**
+```
+Query: "neural/5/networks"
+Result: Documents where "neural" and "networks" appear within 5 positions
+```
 
 ---
 
-## 🏃 How to Run
+## Text Processing Pipeline
 
-### Command Line (Windows)
-```powershell
-cd E:\7mhab\coding\IRproject
-javac -cp src -d out src/Main.java src/SearchEngineController.java src/ConsoleHelper.java
-java -cp out Main
+### **English Pipeline**
+```
+Raw English Document
+  ↓
+Tokenization
+  ├─ Split on whitespace and punctuation
+  └─ Convert to lowercase
+  ↓
+Stop Word Removal
+  ├─ Remove articles (a, an, the)
+  ├─ Remove pronouns (i, you, he, she, it, etc.)
+  ├─ Remove prepositions (in, on, at, by, for, etc.)
+  ├─ Remove conjunctions (and, or, but, etc.)
+  ├─ Remove auxiliary verbs (is, are, be, been, etc.)
+  └─ Remove common adverbs (very, quite, not, never, etc.)
+  ↓
+Porter Stemming
+  ├─ Remove common suffixes
+  └─ Example: "running" → "run", "organization" → "organ"
+  ↓
+Processed Document (indexed terms)
 ```
 
-### Command Line (Linux/Mac)
-```bash
-cd /path/to/IRproject
-javac -cp src -d out src/Main.java src/SearchEngineController.java src/ConsoleHelper.java
-java -cp out Main
+### **Arabic Pipeline**
+```
+Raw Arabic Document
+  ↓
+Normalization
+  ├─ Remove diacritical marks (tashkeel)
+  ├─ Standardize letter forms
+  └─ Handle Unicode variations
+  ↓
+Tokenization
+  ├─ Split on whitespace
+  └─ Maintain Arabic text integrity
+  ↓
+Stop Word Removal
+  ├─ Remove common Arabic particles
+  ├─ Remove Arabic prepositions
+  └─ Remove Arabic conjunctions
+  ↓
+Arabic Stemming
+  ├─ Remove Arabic prefixes and suffixes
+  └─ Example: "والمدارس" (and-the-schools) → root form
+  ↓
+Processed Document (indexed terms)
 ```
 
-### Using IDE
-1. Open project in IDE (IntelliJ, Eclipse, etc.)
-2. Right-click Main.java → Run
-3. Menu appears in console
+---
 
-### Expected Output
+## Ranking & Retrieval Logic
+
+### **TF-IDF Scoring**
+
+**Term Frequency (TF):**
 ```
-╔════════════════════════════════════════════════════════════╗
-║     🔎 WELCOME TO OUR SEARCH ENGINE 🔎                    ║
-║        (محرك البحث المتواضع بتاعنا)                        ║
-╚════════════════════════════════════════════════════════════╝
+TF(term, doc) = 1 + log₁₀(raw_count)
+```
+- Logarithmic scaling avoids bias toward long documents
+- Minimum value of 1 for present terms
 
-ℹ️  Initializing search engine...
-ℹ️  Processing Arabic documents...
-ℹ️  Processing English documents...
-ℹ️  Building positional index...
-✅ Search engine ready!
+**Inverse Document Frequency (IDF):**
+```
+IDF(term) = log₁₀(total_docs / document_frequency)
+```
+- Higher IDF for rare terms
+- Lower IDF for common terms
 
-─────────────────────────────────────────────────────────────
+**TF-IDF Weight:**
+```
+Weight(term, doc) = TF(term, doc) × IDF(term)
+```
+
+### **Cosine Similarity Ranking**
+
+1. **Create TF-IDF vectors**:
+   - For each query term, calculate combined TF-IDF
+   - For each document, calculate TF-IDF for all query terms
+
+2. **Calculate magnitudes**:
+   - Query magnitude: √(Σ query_weight²)
+   - Document magnitude: √(Σ document_weight²)
+
+3. **Compute cosine similarity**:
+   ```
+   Similarity(query, doc) = (query · doc) / (|query| × |doc|)
+   ```
+
+4. **Rank documents**:
+   - Sort all documents by similarity score (descending)
+   - Return top results first
+
+### **Example Calculation**
+```
+Query: "neural networks" (after preprocessing)
+Document containing: neural(3×), networks(2×)
+
+TF("neural", doc) = 1 + log₁₀(3) ≈ 1.477
+TF("networks", doc) = 1 + log₁₀(2) ≈ 1.301
+
+IDF("neural") = log₁₀(10 / 4) ≈ 0.398
+IDF("networks") = log₁₀(10 / 3) ≈ 0.523
+
+Weight("neural", doc) = 1.477 × 0.398 ≈ 0.588
+Weight("networks", doc) = 1.301 × 0.523 ≈ 0.680
+
+Score = 0.588 + 0.680 = 1.268 (approx, after normalization)
+```
+
+---
+
+## Positional Indexing
+
+### **Index Structure**
+```
+term → {
+  doc_id_1 → [pos1, pos2, pos3, ...],
+  doc_id_2 → [pos1, pos2, ...],
+  ...
+}
+```
+
+### **Example**
+```
+"learning" → {
+  doc_0 → [5, 12, 28],
+  doc_2 → [3, 7],
+  doc_5 → [1, 15]
+}
+```
+
+### **Proximity Search Algorithm**
+```
+proximitySearch(term1, term2, k):
+  result = []
+  for each document:
+    if document contains both term1 and term2:
+      for each position p1 of term1:
+        for each position p2 of term2:
+          if |p1 - p2| ≤ k:
+            add document to result
+            break inner loops
+  return result
+```
+
+---
+
+## Console Interface
+
+### **Main Menu**
+```
+═══════════════════════════════════════════════════════════
           🔍 SEARCH ENGINE - MAIN MENU
-═════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════
 
   1️⃣  Ranked Search       - Search and rank documents by relevance
   2️⃣  Proximity Search    - Find terms within a specific distance
   3️⃣  Print Index         - Display the complete inverted index
   4️⃣  Exit                - Exit the application
 
-  Please choose an option (1-4):
+  Please choose an option (1-4): 
+```
+
+### **Ranked Search Flow**
+```
+Ranked Search prompt
+  ↓
+Enter your search query (English or Arabic): machine learning
+  ↓
+Processing query: "machine learning"...
+  ↓
+✅ Search results:
+  1. en_001.txt (score: 8.4523)
+  2. en_003.txt (score: 7.2341)
+  3. en_005.txt (score: 5.1234)
+  
+[Return to main menu]
+```
+
+### **Proximity Search Flow**
+```
+Proximity Search prompt
+  ↓
+Enter your proximity Query: neural/5/networks
+  ↓
+Processing proximity query: "neural/5/networks"...
+  ↓
+✅ Proximity results:
+  1. en_001.txt (score: 8.1234)
+  2. en_002.txt (score: 5.5678)
+
+[Return to main menu]
 ```
 
 ---
 
-## 📁 Project Structure
+## Technologies & Concepts Used
 
-```
-IRproject/
-├── README.md                          ← You are here
-├── REFACTORING_GUIDE.md              (Architecture & Design)
-├── REFACTORING_SUMMARY.md            (Quick Reference)
-├── DEVELOPER_GUIDE.md                (Extension Guide)
-├── FLOW_DIAGRAMS.md                  (Visual Flows)
-├── USER_MANUAL.md                    (User Guide)
-│
-├── src/
-│   ├── Main.java                     (Entry point)
-│   ├── SearchEngineController.java   (Orchestrator)
-│   ├── ConsoleHelper.java            (UI Utilities)
-│   ├── HandlingMain.java             (Legacy)
-│   │
-│   ├── features/
-│   │   ├── Indexing/
-│   │   │   └── PositionalIndex.java
-│   │   ├── Query/
-│   │   │   ├── QueryProcessor.java
-│   │   │   ├── QueryResponse.java
-│   │   │   └── SearchResult.java
-│   │   ├── Rank/
-│   │   │   └── RankedRetriever.java
-│   │   ├── Spelling_Correction/
-│   │   │   ├── EditDistance.java
-│   │   │   └── SpellingCorrector.java
-│   │   ├── Text_Preprocessing/
-│   │   │   ├── Arabic/
-│   │   │   │   ├── ArabicPipeline.java
-│   │   │   │   ├── Normalizer.java
-│   │   │   │   ├── Stemmer.java
-│   │   │   │   ├── StopWordsRemover.java
-│   │   │   │   └── Tokenizer.java
-│   │   │   └── english/
-│   │   │       ├── EnglishTextProcessor.java
-│   │   │       ├── PorterStemmer.java
-│   │   │       ├── StopWordRemover.java
-│   │   │       └── Tokenizer.java
-│   │   └── Evaluation/
-│   │       ├── PrecisionRecall.java  (Evaluation Metrics)
-│   │       ├── README.md
-│   │       └── RESULTS_REPORT.md
-│   │
-│   ├── utils/
-│   │   ├── FileReader.java
-│   │   └── FileWriter.java
-│   │
-│   ├── docs/                         (Original Documents)
-│   │   ├── English/                  (10 English docs)
-│   │   ├── arabic/                   (10 Arabic docs)
-│   │   └── processed/
-│   │       ├── english/              (Processed English)
-│   │       └── arabic/               (Processed Arabic)
-│   │
-│   ├── resources/
-│   │   ├── stopwords_ar.txt
-│   │   └── stopwords_en.txt
-│   │
-│   └── Evaluation.md                 (Evaluation Metrics)
-│
-├── IRproject.iml                     (IDE Configuration)
-└── out/                              (Compiled Files - Generated)
+### **Information Retrieval**
+- Inverted indexing
+- Positional indexing
+- Ranked retrieval
+- TF-IDF weighting
+- Cosine similarity
+- Vector space model
+
+### **Text Processing**
+- Tokenization
+- Stop word removal
+- Stemming (Porter for English, custom for Arabic)
+- Text normalization (Arabic diacritics)
+
+### **Natural Language Processing**
+- Language detection (Arabic vs English)
+- Language-specific text processing pipelines
+- Edit distance for spelling correction
+- Term position tracking
+
+### **Data Structures**
+- HashMap (inverted index)
+- HashSet (document sets)
+- ArrayList (position lists)
+- Priority Queue (ranking results)
+
+### **Algorithms**
+- Levenshtein distance (spelling correction)
+- Logarithmic TF calculation
+- Cosine similarity computation
+- Proximity distance calculation
+
+---
+
+## How to Run
+
+### **Prerequisites**
+- Java 9+ (uses `void main()` syntax)
+- File system with `src/` structure intact
+- Access to `src/docs/` and `src/resources/`
+
+### **Compile**
+```bash
+cd E:\7mhab\coding\IRproject
+javac -d out src/**/*.java
 ```
 
----
-
-## 🔄 Recent Refactoring
-
-### What Changed
-- ✅ Centralized entry point into `Main.java`
-- ✅ Created `SearchEngineController` for orchestration
-- ✅ Extracted UI logic into `ConsoleHelper`
-- ✅ Removed constructor-based initialization
-- ✅ Single Scanner instance management
-- ✅ Clean separation of concerns
-
-### Why
-- Better code organization
-- Easier to test and maintain
-- Clearer user experience
-- Easy to extend with new features
-- Follows SOLID principles
-
-### Impact
-- ✅ No changes to core search logic
-- ✅ No changes to document processing
-- ✅ All existing features 100% compatible
-- ✅ Better user interface
-- ✅ Production-ready architecture
-
-For details, see [REFACTORING_GUIDE.md](REFACTORING_GUIDE.md)
-
----
-
-## 💡 Key Technologies
-
-### NLP Techniques
-- **Tokenization:** Breaking text into meaningful units
-- **Stemming:** Reducing words to their root form
-- **Normalization:** Standardizing text representation
-- **Stop word removal:** Filtering out common words
-- **TF-IDF:** Ranking documents by relevance
-
-### Data Structures
-- **Inverted Index:** Maps terms to documents
-- **Positional Index:** Stores term positions (enables phrase search)
-- **Hash Maps:** Fast term lookup and posting retrieval
-- **Lists:** Maintaining document rankings
-
-### Algorithms
-- **Edit Distance (Levenshtein):** Spelling correction
-- **TF-IDF Scoring:** Document relevance ranking
-- **Proximity Search:** Position-based filtering
-- **Boolean AND:** Multi-term query combining
-
----
-
-## 📊 Evaluation
-
-The system has been evaluated on multiple queries:
-
-### Performance Metrics
-- **Mean Precision:** 86.4%
-- **Mean Recall:** 93.2%
-- **Test Queries:** 5 diverse queries (3 English + 2 Arabic)
-
-### Evaluation Queries
-1. "Neural Networks" - Information retrieval accuracy
-2. "Supervised Learning" - Algorithm matching
-3. "Evaluation Metrics" - Exact term search
-4. "قواعد البيانات" (Databases) - Arabic support
-5. "الأمن السيبراني" (Cybersecurity) - Arabic language processing
-
-For detailed results, see:
-- [Evaluation.md](src/Evaluation.md)
-- [RESULTS_REPORT.md](src/features/Evaluation/RESULTS_REPORT.md)
-
----
-
-## 🎓 Usage Examples
-
-### Example 1: Basic Search
-```
-Menu Choice: 1
-Query: "machine learning"
-Result: Returns 3 documents ranked by relevance
+### **Run**
+```bash
+cd E:\7mhab\coding\IRproject
+java -cp out Main
 ```
 
-### Example 2: Arabic Search
-```
-Menu Choice: 1
-Query: "البحث عن المعلومات"
-Result: Returns relevant Arabic documents
-```
-
-### Example 3: Proximity Search
-```
-Menu Choice: 2
-Term 1: "information"
-Term 2: "retrieval"
-Distance: 3
-Result: Documents where these terms appear close together
-```
-
-### Example 4: Index Analysis
-```
-Menu Choice: 3
-Result: Complete inverted index displayed with all terms and positions
-```
+### **Interactive Usage**
+1. Application initializes (processes and indexes documents)
+2. Main menu appears with 4 options
+3. Choose option:
+   - **1**: Enter query for ranked search
+   - **2**: Enter proximity query (format: term1/k/term2)
+   - **3**: View complete inverted index
+   - **4**: Exit application
 
 ---
 
-## 🔐 Language Support
+## Evaluation Results
 
-| Feature | English | Arabic | Mixed |
-|---------|---------|--------|-------|
-| Tokenization | ✅ | ✅ | ✅ |
-| Stemming | ✅ | ✅ | N/A |
-| Stop Words | ✅ | ✅ | ✅ |
-| Search | ✅ | ✅ | ✅ |
-| Ranking | ✅ | ✅ | ✅ |
-| Proximity | ✅ | ✅ | ✅ |
-| Spelling Correction | ✅ | ✅ | ✅ |
+The system was evaluated on 6 test queries (3 English + 3 Arabic) using precision and recall metrics against manually judged relevance.
 
----
+| Query | Relevant Docs | Retrieved Docs | Precision | Recall |
+|:------|:---|:---|:---:|:---:|
+| machine learning neural networks | en_001, en_003 | en_001, en_003, en_002, en_004 | 50% | 100% |
+| cloud computing and smart devices | en_002, en_005 | en_002, en_001, en_004 | 33% | 50% |
+| encryption authentication malware | en_004, en_005 | en_004, en_002 | 50% | 50% |
+| الذكاء الاصطناعي والتعلم العميق | ar_001, ar_003 | ar_001, ar_003 | 100% | 100% |
+| إنترنت الأشياء والحوسبة السحابية | ar_002, ar_005 | ar_002, ar_001 | 50% | 50% |
+| التشفير والمصادقة متعددة العوامل | ar_004, ar_005 | ar_004, ar_002 | 50% | 50% |
 
-## 🚀 Future Enhancements
+### **Summary Metrics**
+- **Mean Precision**: 55.5% - Most retrieved results are relevant, with some false positives in English queries
+- **Mean Recall**: 66.6% - System retrieves about 2/3 of all relevant documents
+- **Arabic Performance**: Perfect precision and recall on AI query; competitive performance on other Arabic queries
+- **English Performance**: High recall for machine learning query; lower precision on cloud computing query due to overlapping terminology
 
-- [ ] Advanced Boolean queries (AND, OR, NOT)
-- [ ] Wildcard search support
-- [ ] Query expansion with synonyms
-- [ ] Result filtering and sorting options
-- [ ] Search history and bookmarks
-- [ ] Export results to file (CSV/JSON)
-- [ ] Web-based UI
-- [ ] Batch processing for large document collections
-- [ ] Relevance feedback
-- [ ] Machine learning ranking models
+### **Key Observations**
+- Arabic preprocessing pipeline is highly effective
+- English pipeline shows strong recall but moderate precision
+- Cross-domain vocabulary overlap causes some false positives
+- Proximity search successfully filters irrelevant results
 
 ---
 
-## ❓ FAQ
+## Future Improvements
 
-**Q: How do I search in Arabic?**
-A: Just type your Arabic query. The system automatically detects the language and processes it accordingly.
+### **Short Term**
+- [ ] Boolean search operators (AND, OR, NOT)
+- [ ] Wildcard search (term*)
+- [ ] Query expansion via thesaurus/synonyms
+- [ ] Configurable IDF formula variants
+- [ ] User-level relevance feedback
 
-**Q: Can I search in multiple languages at once?**
-A: Yes! You can mix English and Arabic in a single query.
+### **Medium Term**
+- [ ] Database backend for indexing (instead of in-memory)
+- [ ] Distributed indexing across documents
+- [ ] Query caching for performance
+- [ ] Advanced Arabic NLP (morphological analysis)
+- [ ] Support for additional languages
 
-**Q: What if my query has typos?**
-A: The system has automatic spelling correction. Common misspellings are detected and corrected.
-
-**Q: How are documents ranked?**
-A: Documents are ranked using TF-IDF (Term Frequency-Inverse Document Frequency), a standard IR metric that considers how often terms appear in a document and across all documents.
-
-**Q: Can I add more documents?**
-A: Yes, add them to `src/docs/English/` or `src/docs/arabic/` and run the application again. The indexing will automatically include them.
-
-**Q: How do I modify the stop words list?**
-A: Stop words are loaded from resource files. Modify `src/resources/stopwords_en.txt` or `src/resources/stopwords_ar.txt`.
-
----
-
-## 📞 Support & Contributing
-
-### Issues & Bug Reports
-Document any issues you encounter. Include:
-- Steps to reproduce
-- Expected behavior
-- Actual behavior
-- Error messages
-
-### Contributing
-To extend the system:
-1. Review [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)
-2. Follow the architecture guidelines
-3. Maintain separation of concerns
-4. Add appropriate documentation
-5. Test thoroughly before submitting
-
-### Code Quality
-- Follow Java conventions
-- Add JavaDoc comments
-- Use meaningful variable names
-- Keep methods focused
-- Test edge cases
+### **Long Term**
+- [ ] Machine learning ranking (LambdaMART, etc.)
+- [ ] Web crawler for document collection
+- [ ] Named entity recognition
+- [ ] Deep learning embeddings (Word2Vec, BERT)
+- [ ] Real-time indexing pipeline
+- [ ] Web-based UI (REST API + frontend)
 
 ---
 
-## 📄 License & Attribution
+## Implementation Notes
 
-This project is an Information Retrieval system implementation for educational purposes.
+### **Architecture Decisions**
+- **Separation of Concerns**: UI logic in `ConsoleHelper`, business logic in `QueryProcessor` and `PositionalIndex`
+- **Language Abstraction**: Separate pipelines allow independent optimization for each language
+- **Single Scanner**: Centralized input handling in `SearchEngineController` to prevent resource leaks
+- **Factory Pattern**: `ConsoleHelper` provides static factory methods for UI operations
 
-### Algorithms Used
-- Porter Stemmer (for English)
-- Edit Distance (Levenshtein) - for spelling correction
-- TF-IDF (Term Frequency-Inverse Document Frequency) - for ranking
-- Positional Indexing - for phrase search
+### **Known Limitations**
+- In-memory indexing limits scalability to small-medium document collections
+- Single preprocessing pass (documents indexed as-is after processing)
+- No distributed search capability
+- Edit distance spelling correction can be slow for large vocabularies
 
-### References
-- "Introduction to Information Retrieval" by Manning, Raghavan, Schütze
-- Arabic NLP best practices
-- Java best practices and design patterns
-
----
-
-## 🎉 Summary
-
-This IR search engine demonstrates:
-- ✅ Complete IR system implementation
-- ✅ Bilingual text processing (English/Arabic)
-- ✅ Sophisticated ranking algorithms
-- ✅ Clean, modular architecture
-- ✅ User-friendly interface
-- ✅ Extensible design
-- ✅ Production-quality code
-
-**Happy Searching! 🔍**
-
-For more information, see the documentation files:
-- Users → [USER_MANUAL.md](USER_MANUAL.md)
-- Developers → [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)
-- Architecture → [REFACTORING_GUIDE.md](REFACTORING_GUIDE.md)
-
----
-
-**Last Updated:** May 2026  
-**Version:** 2.0 (Refactored)  
-**Status:** Production Ready ✅
-
+### **Testing**
+- Manual evaluation on bilingual test queries
+- Precision/Recall metrics computed against ground truth relevance judgments
+- Console interface manually verified for usability

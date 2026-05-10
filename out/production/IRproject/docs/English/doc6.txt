@@ -1,2 +1,0 @@
-Reinforcement Learning Basics
-Reinforcement learning is a machine learning paradigm where agents learn to make decisions by receiving rewards or penalties. Unlike supervised learning, it does not rely on labeled data but rather on exploration and exploitation. This approach is widely used in robotics and game theory within computer science. Some advanced search engines use reinforcement learning to dynamically adjust ranking algorithms based on user interaction patterns and feedback.

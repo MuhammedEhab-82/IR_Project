@@ -1,2 +1,0 @@
-Supervised Learning Workflows
-In supervised learning, models are trained using labeled datasets to predict outcomes accurately. This process involves feeding the system input-output pairs so it can learn the underlying mapping function. Common algorithms include decision trees and neural networks. Effective supervised learning is fundamental to building search engines and recommendation systems, where the goal is to rank information based on its relevance to specific user queries.
